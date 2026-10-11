@@ -1,0 +1,16 @@
+[build-system]
+requires = ["hatchling>=1.26,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "thinkpixel-sr-mcp"
+version = "0.1.0"
+description = "FastMCP tools for the existing ThinkPixelSR search and store gateway"
+requires-python = ">=3.11"
+dependencies = ["fastmcp==3.4.8", "thinkpixel-sr>=0.2,<0.3"]
+
+[project.scripts]
+thinkpixel-sr-mcp = "thinkpixel_mcp:main"
+
+[tool.hatch.build.targets.wheel]
+include = ["thinkpixel_mcp.py"]

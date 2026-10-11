@@ -14,7 +14,11 @@ from config import ConfigError, FILES
 
 BASELINE = "9e5fc87495832d3a2554965341cbeb43911ff5f5"
 EDITABLE = {"README.md", "cluster/README.md", ".gitignore", "cluster/live/dev/terragrunt.hcl"}
-ADDITIONS = {".env.example", "Makefile", "AGENTS.md", "PLAN.md", "TODO.md",
+ADDITIONS = {"docker/mcp/Dockerfile", "docker/mcp/Dockerfile.dockerignore",
+             "docker/mcp/pyproject.toml", "docker/mcp/thinkpixel_mcp.py",
+             "docker/mcp/README.md", "docker/mcp/.gitignore",
+             "docker/mcp/tests/test_server.py",
+             ".env.example", "Makefile", "AGENTS.md", "PLAN.md", "TODO.md",
              "clients/README.md", "clients/PLAN.md", "clients/TODO.md",
              "clients/contracts/README.md",
              "clients/php/.gitignore", "clients/php/.bumpversion.cfg", "clients/php/composer.json",

@@ -151,3 +151,11 @@ Run static checks, `dev` deployment/Flux smoke tests, and a real ThinkPixelPlugi
 ## 8. Out of scope and later work
 
 No API changes, new hybrid-search algorithm, embedding model switch, data/schema migration, storage redesign, CI/CD overhaul, high-availability redesign, platform-agent integration or feature expansion. If discovered defects prevent reliable deployment, log a focused follow-up and seek approval rather than hiding a runtime refactor inside this makeover. The parent ThinkPixel agent demo remains independent.
+
+## Authorized standalone MCP extension
+
+The operator requested an optional Dockerised FastMCP search/store bridge under
+`docker/mcp`, backed by the Python SDK and an existing environment-supplied key
+and gateway URL. This scoped addition permits an additive async SDK; it does not
+resume infrastructure tasks, change the gateway contract or integrate the
+ThinkPixel agent runtime. See [MCP setup](docker/mcp/README.md).

@@ -1,5 +1,6 @@
-"""ThinkPixelSR synchronous SDK."""
+"""ThinkPixelSR sync and async SDK."""
 
+from .async_client import AsyncThinkPixelSRClient
 from .client import ThinkPixelSRClient, Transport
 from .errors import (
     AuthenticationError,
@@ -25,9 +26,10 @@ from .models import (
     StoreResult,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __all__ = [
     "ThinkPixelSRClient",
+    "AsyncThinkPixelSRClient",
     "Transport",
     "AuthResult",
     "Document",

@@ -250,7 +250,7 @@ class ThinkPixelSRClient:
                 self._token = None
         return response
 
-    def store(self, documents: Sequence[Document]) -> StoreResult:
+    def _store_payload(self, documents: Sequence[Document]) -> list[dict[str, Any]]:
         if (
             not isinstance(documents, Sequence)
             or isinstance(documents, (str, bytes))
@@ -283,7 +283,13 @@ class ThinkPixelSRClient:
             if doc.extra is not None:
                 item["extra"] = dict(doc.extra)
             payload.append(item)
-        response = self._request("store", payload)
+        return payload
+
+    def store(self, documents: Sequence[Document]) -> StoreResult:
+        response = self._request("store", self._store_payload(documents))
+        return self._parse_store(response)
+
+    def _parse_store(self, response: httpx.Response) -> StoreResult:
         if response.status_code == 500:
             result: StoreResult | None = None
             try:
@@ -379,6 +385,9 @@ class ThinkPixelSRClient:
             raise ValidationError("search")
         response = self._request("search", {"text": text, "language": language})
         self._status(response, "search", 200)
+        return self._parse_search(response)
+
+    def _parse_search(self, response: httpx.Response) -> SearchResult:
         data = self._json(response, "search")
         hits: list[SearchHit] = []
         valid = False

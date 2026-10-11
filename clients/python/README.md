@@ -1,6 +1,6 @@
 # ThinkPixelSR Python SDK
 
-Synchronous, typed Python 3.11+ client for the existing gateway's `/search` and
+Sync and async, typed Python 3.11+ client for the existing gateway's `/search` and
 `/store` APIs. Source installation only; this package is not published to PyPI.
 An existing operator-provisioned API key is required. Registration is deferred.
 
@@ -103,3 +103,37 @@ and `.bumpversion.cfg`. It creates no commit or tag automatically. Commit the
 reviewed changes together. Publishing and package tags require a separate request.
 See [changelog](CHANGELOG.md), [wire baseline](../contracts/README.md), and
 [offline verification evidence](../../docs/evidence/clients-python/README.md).
+
+## Async client (0.2.0)
+
+`AsyncThinkPixelSRClient` uses HTTPX async I/O; no aiohttp dependency or thread
+pool is needed. The synchronous interface remains available unchanged.
+
+```python
+import asyncio
+import os
+from thinkpixel_sr import AsyncThinkPixelSRClient
+
+
+async def main():
+    async with AsyncThinkPixelSRClient(
+        base_url=os.environ["THINKPIXEL_BASE_URL"]
+    ) as client:
+        matches = await client.search("Opening hours", language="en")
+        print(matches.to_dict())  # Deliberately exposes retrieved source data.
+
+
+asyncio.run(main())
+```
+
+Await `authenticate`, `search`, `store`, and `aclose`; use `async with` for owned
+transport cleanup. A shared client supports concurrent calls on one event loop;
+a lock coalesces lazy token exchanges and renewal after a rejected token.
+Injected `httpx.AsyncClient` instances remain caller-owned and must disable
+redirects/retries and avoid logging secrets. Native `asyncio.CancelledError`
+propagates; cancellation during store can leave delivery unknown. Do not replay
+it automatically. The shared operation budget includes authentication-lock wait
+and uses `asyncio.timeout` to cancel async I/O. A blocking custom transport can
+still delay cancellation; late responses are rejected. The SDK itself still
+requires an explicit base URL; the [MCP bridge](../../docker/mcp/README.md) reads
+both environment variables.

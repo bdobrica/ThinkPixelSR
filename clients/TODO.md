@@ -128,3 +128,14 @@ Independent 0.1.0 was assigned using bump2version; nothing was published.
 ## Completion evidence template
 
 For each completed task, include a PR/commit link, verification command and output summary, any staging environment used, and any blocked/unverified behavior. Do not check off live tests when only mocked tests were run.
+
+## Operator extension — MCP (existing key)
+
+Registration and original live gates remain deferred. The operator requested
+this extension directly, overriding the previous async deferral.
+
+- [x] **CL-050** Add async Python search/store client while preserving sync behavior; shared auth renewal, bounded replay, deadline and cancellation tests.
+- [x] **CL-051** Add FastMCP search/store tools, strict input schemas, lifecycle cleanup, safe errors, stdio and Streamable HTTP tests.
+- [x] **CL-052** Provide non-root Docker image, restricted build context and hosting/agent setup instructions. Local build and network-disabled container smoke passed; live gateway and remote hosting remain unverified.
+
+Acceptance commands, runtime and limitations: [MCP evidence](../docs/evidence/mcp/README.md).

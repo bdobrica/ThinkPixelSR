@@ -158,3 +158,14 @@ Build the languages sequentially, stabilizing shared fixtures before each port. 
 - Initial TypeScript SDK is Node-only; no browser API-key support.
 
 Do not silently choose these details in SDK code. Track decisions in the contract notes or a short ADR and update this plan only when decisions are accepted.
+
+## Operator extension — MCP bridge
+
+The operator explicitly requested a standalone FastMCP adapter under `docker/mcp`
+using existing `THINKPIXEL_API_KEY` and `THINKPIXEL_BASE_URL`. This authorizes the
+optional bridge and an additive async Python SDK, overriding the sync-first
+async deferral above. HTTPX provides async I/O without replacing the sync SDK.
+Only existing search/store operations are exposed. Registration, gateway/plugin
+changes, live deployment and wider ThinkPixel integration remain deferred.
+Acceptance: mocked MCP discovery/calls, async concurrency/deadline/cancellation
+checks, preserved sync conformance, packaging and Docker build where available.

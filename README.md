@@ -143,6 +143,12 @@ Persist scaling changes in the existing worker input, inspect every affected
 pool, and acknowledge deletions/reductions. Live dev apply, reconciliation,
 image push/pull and scaling acceptance remain pending; prod is blocked.
 
+## Optional MCP access
+
+The [FastMCP bridge](docker/mcp/README.md) exposes search and store tools through
+stdio or Streamable HTTP using an existing gateway key. Docker hosting and async
+Python SDK usage are documented there. It is separate from the deployed cluster.
+
 ## Documentation
 
 | Need | Guide |

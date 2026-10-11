@@ -1,0 +1,15 @@
+# Deny everything except the explicit public build inputs.
+**
+!clients/
+!clients/python/
+!clients/python/pyproject.toml
+!clients/python/README.md
+!clients/python/LICENSE
+!clients/python/src/
+!clients/python/src/thinkpixel_sr/
+!clients/python/src/thinkpixel_sr/*.py
+!clients/python/src/thinkpixel_sr/py.typed
+!docker/
+!docker/mcp/
+!docker/mcp/pyproject.toml
+!docker/mcp/thinkpixel_mcp.py
