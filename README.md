@@ -4,7 +4,7 @@
 
 ThinkPixelSR is the continuation of [ThinkPixelInfra](https://github.com/bdobrica/ThinkPixelInfra). It provides the existing search and retrieval-augmented generation (RAG) infrastructure used by [ThinkPixelPlugin](https://github.com/bdobrica/ThinkPixelPlugin), including asynchronous document ingestion and hybrid vector retrieval. The immediate objective is **to preserve this working MVP while making it reproducible, operable, and understandable**—not to redesign its architecture.
 
-> **Status:** Existing standalone MVP; repository migration and operator-experience makeover in progress. This is not a claim of production qualification or integration with the wider agent platform. See [PLAN.md](PLAN.md) for scope and [TODO.md](TODO.md) for the implementation sequence.
+> **Status:** Existing standalone MVP; operator tooling and documentation are implemented. Remaining live acceptance and migration work is deferred at the operator's request while the cluster stays in use; VM quota also limits scale tests. See [PLAN.md](PLAN.md#operator-deferral) for the retained acceptance gaps and [TODO.md](TODO.md) for completed work. Production qualification and wider agent-platform integration remain unclaimed.
 
 ## What it does
 

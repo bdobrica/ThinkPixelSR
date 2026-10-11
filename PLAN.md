@@ -6,6 +6,39 @@ Move the existing [ThinkPixelInfra](https://github.com/bdobrica/ThinkPixelInfra)
 
 `TODO.md` is the ordered execution checklist. `AGENTS.md` is mandatory guidance for coding agents. This plan specifies intent and gates, not proof that tasks are completed.
 
+### Operator deferral
+
+On 2026-10-11, the operator removed unfinished makeover tasks from the active
+TODO scope. The cluster and pods are needed for at least the next couple of
+weeks, and the Hetzner VM quota prevents allocating capacity for scale tests.
+No resumption date or maintenance window is scheduled. Further live acceptance,
+publication and cutover work requires a new operator request.
+
+The following original task IDs are deferred, not completed:
+
+| Original IDs | Unverified or unperformed work |
+| --- | --- |
+| P3-03 | Complete safe dev plan and reviewed saved-plan apply |
+| P3-04 | Guarded Flux attachment and ownership verification; read-only readiness already passed |
+| P3-05 | Actual model-image build, publication and pull verification |
+| P3-07, P5-04 | Valid existing-worker scale plan/recovery review and any separately authorized live scaling |
+| P5-03 | Real WordPress/plugin ingestion-to-search acceptance and scoped cleanup |
+| P5-05 | GitOps source switch to SR and verified switch-back |
+| P5-06 | Parent ThinkPixel catalog publication |
+| P5-07 | Final release qualification against the original live acceptance gates |
+
+D-01/D-02 proposals remain outside makeover scope, as described in section 8,
+and have also been removed from the active TODO. Historical evidence records
+their status at the time of inspection; it is not an instruction to resume work.
+
+The original gates and acceptance criteria below remain reference requirements
+for any future deployment qualification. They have not all been met. The
+[operator inspection](docs/evidence/phase-5/operator-machine.md) records recovered
+Flux readiness; the [isolated plan review](docs/evidence/phase-5/dev-plan-review.md)
+records legacy DNS refresh failure and an incomplete plan proposing replacement
+of all five nodes. Preserve the live system, original state and rollback custody;
+provider/API compatibility and any DNS-state migration need separate review.
+
 ## 2. Non-negotiable invariants
 
 1. Preserve deployed behavior for API authentication, `/store`, `/search`, queue processing, embeddings, hybrid Qdrant retrieval and existing WordPress plugin integration.

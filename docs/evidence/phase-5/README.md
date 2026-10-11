@@ -1,5 +1,12 @@
 # Phase 5 validation and cutover preparation
 
+**Current scope:** On 2026-10-11 the operator removed unfinished items from the
+active TODO and deferred further acceptance/cutover work. See the
+[deferral decision](../../../PLAN.md#operator-deferral). The unchecked/pending
+statuses below are historical acceptance records, not active tasks. Later
+[machine inspection](operator-machine.md) and [plan review](dev-plan-review.md)
+record Flux recovery and an incomplete unsafe infrastructure plan.
+
 Phase 5 is **partially complete**. Offline validation and a precise dev lifecycle
 blocker record are complete; live plugin/scaling acceptance, source cutover,
 parent publication and final PLAN acceptance remain open. The checks below

@@ -1,6 +1,10 @@
 # ThinkPixelSR makeover — chronological checklist
 
-Follow [PLAN.md](PLAN.md). Check a box only after its acceptance evidence exists. Completed baseline documentation does not imply live validation or infrastructure changes. Keep items in dependency order; split work into small reviewable PRs. All live changes require explicit operator authorization.
+No active makeover tasks remain in this checklist. At the operator's request,
+unfinished items have been removed from the active scope; their unverified
+acceptance criteria are retained in [PLAN.md](PLAN.md#operator-deferral).
+Completed items below retain their evidence. Removal does not imply successful
+live validation, deployment, scaling or cutover.
 
 The [2026-10-11 operator-machine inspection](docs/evidence/phase-5/operator-machine.md)
 locates the original dev state and records approved read-only readiness checks,
@@ -40,13 +44,11 @@ migration require a separate review before deployment/scaling acceptance.
 
 ## Phase 3 — Implement Makefile in risk order
 
+Wrappers are implemented; unfinished live acceptance has been deferred.
+
 - [x] **P3-01** Add `.DEFAULT_GOAL := help` (or equivalent) and `help`, `doctor`, `config-check`; ensure `make` alone cannot modify anything. **Done:** fixed recipes, self-documenting help and safe checks validated. [Evidence](docs/evidence/phase-3/README.md).
 - [x] **P3-02** Add `cluster-init` and `cluster-plan` wrappers selecting only known environment roots. **Done:** direct arguments and real Terragrunt forwarding to offline Terraform stub agree; previews execute no tools and no implicit apply. Live state/provider validation remains gated. [Evidence](docs/evidence/phase-3/README.md).
-- [ ] **P3-03** Add `cluster-up`, applying a reviewed plan with operator confirmation and explicit production guard. **Done:** deliberate dev apply validated; no unreviewed `-auto-approve`. **Implemented:** exact saved-plan hash/input/workspace binding, explicit confirmation, single attempt and prod block; offline guards pass. **Pending:** authorized real dev apply with authoritative state/credentials. [Evidence](docs/evidence/phase-3/README.md).
-- [ ] **P3-04** Add `flux-check`, then guarded `flux-bootstrap` matching existing Flux installation and Git source setup. **Done:** Flux starts reconciling without changing workload ownership. **Implemented:** read-only readiness and guarded checked-in overlay attachment to an existing operator, preserving old source/identities. **Verified:** live read-only wrapper prerequisites/root readiness and all six current-generation Kustomizations after operator credential repair/reconciliation. **Pending:** authorized guarded attachment and ownership verification; fresh decryption setup remains unverified. [Live evidence](docs/evidence/phase-5/operator-machine.md#recovery-after-operator-reconciliation), [guide](docs/operations/commands.md#flux-readiness-and-guarded-attachment).
-- [ ] **P3-05** Add `images-build` and `images-push` using existing Dockerfiles, architecture targets and registry/tag conventions; require explicit tags and credentials. **Done:** dev image push and pull reference verified without tag drift. **Implemented:** six exact contexts, both architectures, explicit checked-in Quay/version tags, private OCI export and guarded build/push; offline commands verified. **Pending:** authorized actual build/push/pull. [Evidence](docs/evidence/phase-3/README.md).
 - [x] **P3-06** Add `status`, offline `verify` and explicitly gated live smoke checks. **Done:** redacted readiness summaries, offline gates and opt-in HTTPS `verify-live` liveness/database checks; synthetic tests pass. Full writable API/plugin smoke remains separately authorized and unverified. [Guide](docs/operations/commands.md#explicit-live-health-and-full-smoke).
-- [ ] **P3-07** Add guarded `cluster-scale ENV=dev POOL=<name> COUNT=<n>` for existing worker pools only; show plan first and require explicit reduction acknowledgment. **Done:** scale-up reviewed; scale-down safeguards tested in dry-run and actual reductions only with authorization. **Implemented:** persisted existing-worker input validation, plan-only workflow, actual plan count checks, master block and deletion/reduction acknowledgments; synthetic safeguards pass. **Pending:** authorized scale-up plan/state review; no actual reduction performed. [Guide](docs/operations/commands.md#worker-scaling).
 - [x] **P3-08** Add basic lint/check coverage for Make, shell, YAML, HCL formatting and links where tools exist. **Done:** repeatable `make verify` passes available offline gates, explicitly reports tool skips and inherited Kustomize load restrictions; no CI redesign. [Evidence](docs/evidence/phase-3/README.md).
 
 ## Phase 4 — Write operator documentation against actual commands
@@ -66,19 +68,10 @@ external bootstrap/schema prerequisites and authorized live dev/plugin validatio
 
 ## Phase 5 — Validate, migrate, close
 
-Offline validation and the dev blocker-record alternative are complete. Live
-acceptance, source switch/recovery, parent publication and final closure remain
-pending; the overall PLAN gate is open. [Evidence and prepared review patches](docs/evidence/phase-5/README.md).
+Offline validation and the dev blocker-record alternative are complete.
+Remaining live acceptance, source cutover, parent publication and final
+qualification are deferred; the original acceptance gate has not been met.
+[Evidence and prepared review patches](docs/evidence/phase-5/README.md).
 
 - [x] **P5-01** Run static validation/secret scanning and confirm no unintended changes to code, API contracts, database schema, runtime manifests or resource identities. **Done:** repeatable baseline gate, limited candidate secret-pattern/path scan, 401/405 inherited files byte-identical with four reviewed docs/ignore/path-hook exceptions; six current renders match frozen renders. [Comparison and scope](docs/evidence/phase-5/README.md#p5-01-baseline-and-publication-candidates).
 - [x] **P5-02** Walk the documented dev lifecycle: config-check -> cluster-plan -> authorized cluster-up -> Flux bootstrap/reconcile -> image pull -> status. **Done:** actual local check failures plus ordered, precise state/credentials/bootstrap/schema/live authorization blockers recorded; no live lifecycle success implied. [Walkthrough](docs/evidence/phase-5/README.md#p5-02-documented-dev-lifecycle-walkthrough).
-- [ ] **P5-03** Exercise the actual ThinkPixelPlugin document-ingest-to-search golden path and compare to baseline. **Done:** expected results and limitations captured with sanitized logs. **Pending:** authorized real WordPress/dev installation, fixtures and observed baseline comparison; source-derived procedure alone does not meet acceptance. [Gaps](docs/evidence/phase-5/README.md#p5-03-and-p5-04-plugin-and-scaling-acceptance-still-open).
-- [ ] **P5-04** Verify scaling (at minimum safe plan/review; live scale tests if authorized) and document rollback with actual worker pools and workload constraints. **Prepared:** synthetic guards and api/monitor recovery/storage review; actual current-state/worker plan and placement/PDB/PV review pending. [Guide](docs/operations/scaling.md).
-- [ ] **P5-05** Schedule and perform explicit GitOps remote switch only after verifying access, rollback and old source retention. **Done:** new source reconciles as intended; old source can be restored. **Prepared:** unapplied two-owner URL patch, zero tenant-render drift and synthetic rollback; scheduling/access/live reconciliation and switch-back pending. [Cutover decision](docs/migration.md#phase-5-review-patches-and-cutover-decision).
-- [ ] **P5-06** Update parent ThinkPixel catalog/docs for actual `ThinkPixelSR` repository and retain lineage link to ThinkPixelInfra; do not elevate maturity automatically. **Prepared:** applicability-checked patch at verified parent revision, stable `infra` ID and adjacent/standalone/lineage retained; publication waits for verification. [Patch](docs/evidence/phase-5/parent-catalog.patch).
-- [ ] **P5-07** Review release notes, broken links, scripts and cross-file consistency; mark verified commands stable and document open limitations. **Done:** acceptance criteria in PLAN met, with evidence. **Prepared:** reviewed unreleased notes and offline checks; final PLAN live acceptance remains pending. [Notes](docs/releases/operator-makeover.md).
-
-## Deferred / separate proposals
-
-- [ ] **D-01 (not part of makeover)** Evaluate broader ThinkPixel platform integration only against a concrete use case and a separately accepted architecture decision.
-- [ ] **D-02 (not part of makeover)** Track search performance, API modernization, new models, extra deployment providers and production hardening separately; do not smuggle them into P0–P5.
