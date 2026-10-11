@@ -85,15 +85,16 @@ unverified.
 4. Commit the reviewed governance documents and `docs/` together with the two
    README edits. Keep all live Flux manifests unchanged in that commit.
 5. The user confirms `bdobrica/ThinkPixelSR` already exists. Publish only after
-   authenticated GitHub access is available. P1-01 remains incomplete until
-   the actual remote and main contents have been verified. Inspect existing
+   authenticated GitHub access is available. [Phase 1 evidence](evidence/phase-1/README.md)
+   records the completed publication and remote verification. Inspect existing
    commits and reconcile deliberately; do not force-push, overwrite history,
    change visibility or create another repository.
 
 ### Publication once authenticated access is available
 
 The user installed GitHub CLI and authenticated during Phase 1. Read-only
-checks confirmed the public remote main is the frozen source revision. The
+checks confirmed the public remote main was the frozen source revision before
+publishing the continuation. The
 following is the publication procedure; [evidence](evidence/phase-1/README.md)
 records completion. It requires `gh`, GitHub login/permission, a reviewed continuation
 commit, and a reviewed historical secret scan (the offline pattern scan is

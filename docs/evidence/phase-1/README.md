@@ -1,10 +1,10 @@
-# Phase 1 — local lineage and import evidence
+# Phase 1 — lineage, publication and import evidence
 
-P1-02 through P1-04 are implemented. P1-01's local history-preserving import is
-implemented, and authenticated checks confirm the existing **public** GitHub
-repository main matches the frozen source. Publication of the reviewed
-continuation and release tags is the remaining acceptance check. No remote
-creation, Actions change or GitOps cutover occurred. This evidence does not resolve the
+**P1-01 through P1-04 are complete.** The history-preserving continuation and
+all four original release tags are published to the existing **public** GitHub
+repository. Remote main and all 422 published file blobs/modes were verified;
+the inherited workflow passed. No remote creation, Actions setting change or
+GitOps cutover occurred. This evidence does not resolve the
 [Phase 0 live-validation gaps](../phase-0/README.md).
 
 ## Inputs and scope
@@ -16,15 +16,16 @@ creation, Actions change or GitOps cutover occurred. This evidence does not reso
 | Import method | Local `git archive` of the committed tree; original main/tag objects imported using local Git fetch; index initialized from the frozen tree without overwriting working files |
 | Retained history | 265 main commits; four original release tags; 267 commits reachable from main plus those tags; original object IDs/authorship preserved |
 | Excluded material | Ignored secrets/private keys, untracked `docker/api_gateway.zip`, caches, `.git` config/reflogs and experimental branch refs |
-| Remote settings | `origin` points to existing public ThinkPixelSR; authenticated remote main equals the frozen source; `thinkpixelinfra` records the old GitHub URL |
-| Continuation changes | Working-tree documentation changes; no new commit or staged documentation |
+| Remote settings | `origin` points to public ThinkPixelSR; its pre-publication main equaled the frozen source; `thinkpixelinfra` records the old GitHub URL |
+| Continuation changes | Focused documentation commits, published as fast-forward updates; no rewritten history or force push |
 | Source/plugin | Their working files, refs and remotes remain unchanged |
 
 The [comparison table](baseline-diff.tsv) has one row for every frozen tracked
 file. **403 files are byte-identical** to the committed baseline. The only two
 changed inherited files are `README.md` and `cluster/README.md`; changes are
 names, links and explicit inherited-setup limitations. All 405 original paths
-remain present, and their Git index modes are retained. The mounted filesystem
+remain present, and their Git modes are retained. During initial import, the
+index exactly matched the frozen tree before documentation was staged. The mounted filesystem
 reports mode 777 even after chmod; `core.filemode=false` already existed, so
 mode preservation is checked through Git objects/index rather than filesystem
 permission bits. The first filesystem-mode comparison failed for that reason;
@@ -41,11 +42,11 @@ remain unchanged; TODO.md and README.md reflect implemented versus pending work.
 
 | Check | Result |
 | --- | --- |
-| All 405 source paths against frozen Git blob inventory | PASS: 403 exact matches, two approved documentation changes; index path/mode/blob equality with frozen tree |
+| All 405 source paths against frozen Git blob inventory | PASS: 403 exact matches, two approved documentation changes; index path/mode/blob equality during initial import |
 | Original main ancestry and four release-tag objects | PASS: exact object ID comparison; 265 main / 267 including tagged side history; no shared Git alternates |
 | `git fsck --no-reflogs` | PASS: imported Git objects/connectivity |
 | `git diff --exit-code <baseline> -- LICENSE cluster/infra cluster/live k8s docker database local debug .github .gitignore .gitattributes` | PASS: no inherited runtime/build/license changes |
-| `git diff --cached --exit-code <baseline>` | PASS: index contains the unchanged original tree; makeover edits remain reviewable |
+| `git diff --cached --exit-code <baseline>` before staging | PASS: initial index contained the unchanged original tree; subsequent changes were staged with an explicit 19-file documentation allowlist |
 | `make -C local help` | PASS; local help only, no service startup |
 | `docker compose -f local/docker-compose.yaml config --quiet` | PASS; no daemon or secret-bearing rendered output |
 | `terraform -chdir=cluster fmt -check -recursive` | PASS; no init/provider download/state/backend/plan |
@@ -86,16 +87,33 @@ credentials and logging risks remain the inherited Phase 0 follow-ups.
 Initial read-only access lacked authentication. The user then installed
 **gh 2.46.0** and logged in. With approved network access, `gh auth status`,
 `gh repo view`, the commit/tree API and `git ls-remote origin` confirmed the
-existing public repository main is exactly the frozen source commit. No
-repository creation or history reconciliation is needed. P1-01 remains open
-until the reviewed continuation/tags are pushed and remote tree verified.
+existing public repository main was exactly the frozen source commit. No
+repository creation or history reconciliation was needed. The reviewed
+continuation/tags were then pushed and the remote tree verified.
 See [publication steps](../../migration.md#publication-once-authenticated-access-is-available).
 
 The Actions permissions API reports enabled/all. Settings and workflow remain
 unchanged: this is a fast-forward continuation from the existing baseline,
 not an initial all-zero-before source push. No `.bumpversion.cfg` changes are
-included, so the inherited image-build loop should be empty. Check the workflow
-result after publication; workflow success is not inferred from this review.
+included, so the inherited image-build loop has no changed model/gateway
+versions to publish. The observed workflow completed successfully.
+
+## Published acceptance evidence
+
+The primary continuation is
+[`4549e6372eaf3caca2cda008f89a551d0755a8c1`](https://github.com/bdobrica/ThinkPixelSR/commit/4549e6372eaf3caca2cda008f89a551d0755a8c1),
+whose parent is the frozen source. Publication used `git push --atomic` for
+fast-forward main and the four original tag refs. `git ls-remote --refs origin`
+confirmed main and all four original tag object IDs. The recursive GitHub tree
+API returned all **422** tracked files with no truncation, and every blob ID
+and mode matched the local committed tree. The published source retains all
+403 unchanged inherited files, including LICENSE and every runtime/build file.
+
+[Workflow run 38139047989](https://github.com/bdobrica/ThinkPixelSR/actions/runs/38139047989)
+completed with `success`. No `.bumpversion.cfg` files changed, and the workflow
+itself and Actions permissions remain unchanged. A following documentation-only
+handoff commit records these observed results and completes the checklist;
+final remote-head/tree verification is repeated after that push.
 
 The [migration guide](../../migration.md) records unchanged live sources,
 coexistence, publication precautions for the inherited Actions workflow,

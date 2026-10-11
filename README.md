@@ -39,8 +39,9 @@ The diagram is deliberately conceptual; use the manifests and code in this repos
 The committed implementation has been imported from the frozen ThinkPixelInfra
 revision, retaining its Git history and functional paths. See the
 [Phase 1 evidence](docs/evidence/phase-1/README.md) and
-[migration and rollback guide](docs/migration.md). GitHub publication remains
-unverified; the existing Flux source still points to ThinkPixelInfra.
+[migration and rollback guide](docs/migration.md). The continuation and original
+release tags are published on GitHub; the existing Flux source still points to
+ThinkPixelInfra.
 
 | Path | Existing responsibility |
 | --- | --- |

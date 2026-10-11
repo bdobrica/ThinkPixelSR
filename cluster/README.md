@@ -2,7 +2,7 @@
 
 > **Phase 1 migration status:** These are inherited instructions, not a verified
 > deployment runbook. ThinkPixelSR preserves the original infrastructure and
-> Flux identities. GitHub publication/access is not yet verified; the old
+> Flux identities. The continuation is published on GitHub; the old
 > ThinkPixelInfra repository remains available. Before initializing a migrated
 > checkout, locate and preserve the authoritative Terraform state and existing
 > credentials/SSH keys; do not create replacement keys for an existing cluster.
@@ -43,8 +43,8 @@ git clone https://github.com/bdobrica/ThinkPixelSR.git
 cd ThinkPixelSR/cluster/live/dev
 ```
 
-- The clone command is for use after the new GitHub remote has been published
-  and verified. During coexistence, the original ThinkPixelInfra clone remains
+- The new GitHub source and release tags have been published and verified.
+  During coexistence, the original ThinkPixelInfra clone remains
   usable; this rename does not switch Flux or migrate infrastructure state.
 - The environment directories are `dev` and `prod`; only dev has configuration.
   Do not substitute dev settings for the empty production environment.
