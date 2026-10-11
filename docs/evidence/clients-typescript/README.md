@@ -53,3 +53,13 @@ stop adapter work that ignores cancellation. Nested unknown metadata is not
 deeply frozen. Results deliberately preserve gateway scores and duplicate IDs;
 queue acceptance is not indexing or durability evidence. The
 [usage guide](../../../clients/typescript/README.md) records these limits.
+
+## Prettier formatting follow-up
+
+Source, tests, examples and package/configuration JSON use pinned Prettier 3.9.10
+with package.json configuration and `npm run format` / `npm run format:check`
+commands. Formatting introduces no intended runtime changes; the SDK remains
+version 0.1.0. On Node.js 24.20.0, formatting, TypeScript checks and all 90 tests
+passed. Tests needed local loopback-port permission outside the sandbox.
+`make verify` passed (44 offline tests, one skip), and `git diff --check` passed.
+No live gateway, publication or deployment was used.

@@ -139,10 +139,15 @@ cannot inspect or enforce an arbitrary adapter's internal behavior.
 
 ```sh
 npm ci
+npm run format:check
 npm run lint
 npm test
 npm pack
 ```
+
+`format` applies Prettier to source, tests, examples and package/configuration JSON;
+`format:check` checks the same files without changing them. Prettier is a pinned
+development dependency, with its style configured in package.json.
 
 `lint` runs strict TypeScript checks, including examples; tests use Node's built-in
 test runner and shared synthetic gateway fixtures. The loopback fetch test needs
