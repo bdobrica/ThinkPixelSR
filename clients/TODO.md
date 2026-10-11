@@ -1,6 +1,6 @@
 # TODO — ThinkPixelSR language clients
 
-Chronological implementation checklist for [PLAN.md](PLAN.md). Completed Phase 0 source/documentation tasks link to their evidence below. Mark complete only with a reviewed change and test/documentation evidence. IDs are stable for issues and PRs. Do not begin client implementations until existing gateway and plugin wire behavior is captured. Public registration needs a security decision before server changes.
+Chronological implementation checklist for [PLAN.md](PLAN.md). Completed Phase 0 source/documentation tasks link to their evidence below. Mark complete only with a reviewed change and test/documentation evidence. IDs are stable for issues and PRs. Use the API Gateway API as the SDK source of truth; plugin differences remain separate compatibility findings. Public registration needs a security decision before server changes.
 
 ## Phase 0 — Evidence and baseline (Gate 0)
 
@@ -10,22 +10,31 @@ Chronological implementation checklist for [PLAN.md](PLAN.md). Completed Phase 0
 - [x] **CL-004** Document exact `/search` method, query/filter/scope schema, result fields, ranking metadata and errors.
 - [x] **CL-005** Inspect existing key generation, ownership, MySQL persistence, hashing, revocation and registration/provisioning paths.
 - [x] **CL-006** Add `contracts/README.md` and sanitized golden JSON fixtures; record uncertainties, versioning and source provenance.
-- [x] **CL-007** Run or document a baseline ThinkPixelPlugin→gateway→index→search smoke test; note environment-dependent omissions.
+- [ ] **CL-007** Run the baseline ThinkPixelPlugin→gateway→index→search smoke test. Procedure documented; live acceptance deferred because API/plugin differences remain unresolved and no approved disposable environment was supplied.
 - [ ] **GATE 0** Peer-review and freeze a *verified* initial wire-compatibility matrix.
 
-**CL-001–CL-007 evidence:** [wire baseline and fixtures](contracts/README.md),
+**CL-001–CL-006 evidence and CL-007 procedure:** [wire baseline and fixtures](contracts/README.md),
 [source revisions, verification and documented smoke omissions](../docs/evidence/clients-phase-0/README.md).
 Gate 0 awaits independent review; live compatibility remains unverified.
+**Operator decision (2026-10-11):** the API Gateway API is authoritative for SDKs.
+Proceed with Phase 1 against the source-audited gateway baseline despite the
+open CL-007/Gate 0 live/plugin gaps. This does not authorize server/plugin fixes
+or claim integration success.
 
 ## Phase 1 — SDK interface and engineering choices (Gate 1)
 
-- [ ] **CL-008** Agree on `base_url`, `api_key`, transport, timeouts and method names for Python, TypeScript and PHP.
-- [ ] **CL-009** Define canonical store and search argument/result mappings; preserve existing response fields.
-- [ ] **CL-010** Specify token cache, expiry handling, re-exchange after 401 (one retry maximum) and no invented refresh-token endpoint.
-- [ ] **CL-011** Specify retry/idempotency policy, especially no blind resend of an accepted `/store` request.
-- [ ] **CL-012** Specify error classes, redaction, TLS expectations and rate-limit behavior in all languages.
-- [ ] **CL-013** Decide supported language/runtime versions, transport libraries, SDK naming and packaging (names not presumed registered).
+- [x] **CL-008** Agree on `base_url`, `api_key`, transport, timeouts and method names for Python, TypeScript and PHP.
+- [x] **CL-009** Define canonical store and search argument/result mappings; preserve existing response fields.
+- [x] **CL-010** Specify token cache, expiry handling, re-exchange after 401 (one retry maximum) and no invented refresh-token endpoint.
+- [x] **CL-011** Specify retry/idempotency policy, especially no blind resend of an accepted `/store` request.
+- [x] **CL-012** Specify error classes, redaction, TLS expectations and rate-limit behavior in all languages.
+- [x] **CL-013** Decide supported language/runtime versions, transport libraries, SDK naming and packaging (names not presumed registered).
 - [ ] **GATE 1** Review cross-language public interface and backward-compatibility rules.
+
+**CL-008–CL-013 evidence:** [SDK interface and engineering specification](../docs/clients/sdk-interface.md).
+Signatures, mapping tables, auth/retry state rules, error policy, runtime targets
+and package/transport choices are specified for all three languages. Gate 1
+remains open for independent review; SDK code and contract tests are later phases.
 
 ## Phase 2 — Key-registration policy and public endpoint (Gate 2)
 

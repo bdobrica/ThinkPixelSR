@@ -1,7 +1,9 @@
 # Gateway wire baseline v0
 
 Source-audited baseline for **CL-001–CL-007**. This describes the existing
-protocol, not proposed SDK signatures. Gate 0 remains open for independent
+protocol, not shipped SDK signatures. The gateway API is authoritative for SDKs
+by operator decision on 2026-10-11; plugin differences do not override it. See
+the [Phase 1 specification](../../docs/clients/sdk-interface.md). Gate 0 remains open for independent
 review; live plugin compatibility is unverified. No server changes are implied.
 See [inspection and verification evidence](../../docs/evidence/clients-phase-0/README.md).
 
@@ -21,8 +23,8 @@ Inspected 2026-10-11:
 
 `v0` is this evidence revision, **not an API path/version or SDK release**.
 Changes must identify new source SHAs, distinguish source/mock/live evidence,
-and retain existing fixtures or explain compatibility impact. Do not freeze
-public signatures or silently turn observed defects into desired behavior.
+and retain existing fixtures or explain compatibility impact. Phase 1 signatures may be specified under the operator sequencing exception;
+do not silently turn observed defects into desired server behavior.
 
 ## Origin, routing and transport
 
@@ -221,4 +223,5 @@ effective deployed gateway/plugin/image/schema revisions; actual TLS origin;
 non-production WordPress store→index→search observation; queue loss/retry
 behavior; deployed backend behavior; enrollment policy/security decisions.
 The [baseline procedure and omissions](../../docs/evidence/clients-phase-0/README.md)
-records CL-007's permitted documentation outcome. No live test is checked off.
+records the documented CL-007 procedure. CL-007 live acceptance is now deferred
+and unchecked; Phase 1 proceeds by explicit operator decision.

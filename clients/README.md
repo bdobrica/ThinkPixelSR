@@ -2,7 +2,7 @@
 
 Official, small language clients for the existing [ThinkPixelSR](../README.md) Search/RAG gateway. The goal is to make the working integration demonstrated by [ThinkPixelPlugin](https://github.com/bdobrica/ThinkPixelPlugin) available to other applications without requiring developers to implement the HTTP authentication and ingestion/search flow themselves.
 
-> **Status: Phase 0 source baseline documented; Gate 0 review pending.** The Python, TypeScript and PHP packages, sample calls and public registration flow described here are target capabilities, **not** evidence that SDKs or new API endpoints exist. See [PLAN.md](PLAN.md) and [TODO.md](TODO.md). See the [source-audited wire baseline](contracts/README.md) and its explicit live-test gaps before coding.
+> **Status: Phase 1 interface specified; Gates 0 and 1 review pending.** The Python, TypeScript and PHP packages, sample calls and public registration flow described here are target capabilities, **not** evidence that SDKs or new API endpoints exist. See [PLAN.md](PLAN.md) and [TODO.md](TODO.md). See the [source-audited wire baseline](contracts/README.md) and its explicit live-test gaps and the [SDK interface specification](../docs/clients/sdk-interface.md) before coding.
 
 ## Scope
 
@@ -11,7 +11,7 @@ Each client will provide:
 - **API-key authentication:** accept an existing API key and exchange it for the gateway-issued JWT using the existing authentication contract.
 - **JWT lifecycle:** cache the token in memory, reuse it while valid, acquire a replacement when needed, and retry an authenticated request at most once after an authentication failure when safe.
 - **Document storage:** submit documents to the existing `/store` API, returning its real acknowledgement/status. The implementation must respect the asynchronous NATS indexing pipeline: an accepted submission is **not** proof that a document has been indexed or is searchable.
-- **Document search:** invoke the existing `/search` API, preserving supported hybrid-search options and response metadata without inventing search capabilities.
+- **Document search:** invoke the existing `/search` API, preserving the supported text/language arguments and response fields without inventing search capabilities.
 - **Key registration:** expose an API-key enrollment flow once a secure, explicitly designed **public registration endpoint** is implemented on the gateway. Registration is not the same operation as exchanging an existing key for a JWT.
 - **Consistent errors:** distinguish invalid credentials, authorization failure, validation, rate limits, timeouts, transient network/server failures and unsuccessful registration.
 
@@ -24,7 +24,7 @@ clients/
 ├── TODO.md
 ├── contracts/             # Source-audited API baseline and synthetic fixtures
 ├── python/                # Python package and examples (planned)
-├── typescript/            # Node.js/browser-compatible TS package (planned)
+├── typescript/            # Node.js TS package (planned)
 └── php/                   # Composer package and examples (planned)
 ```
 
@@ -42,7 +42,7 @@ All three SDKs should expose the same **conceptual** operations, while following
 | Search indexed documents | `search(...)` | `search(...)` | `search(...)` |
 | Register a new API key | `register_key(...)` | `registerKey(...)` | `registerKey(...)` |
 
-**Names above are proposed SDK APIs, not verified server routes or working code.** Parameter names, single/batch behavior and return objects are to be finalized from real gateway/plugin contracts. Automatic authentication on the first protected request is encouraged, with an explicit method for operators who need it.
+**Core signatures are specified in the Phase 1 interface document, not implemented code.** Registration signatures remain deferred until Gate 2. Automatic authentication on the first protected request is encouraged, with an explicit method for operators who need it.
 
 ### Client configuration
 
@@ -84,7 +84,7 @@ Until the generic SDK enrollment contract is approved and implemented, SDK `regi
 
 ## Compatibility and quality
 
-- **Canonical behavior:** [ThinkPixelPlugin](https://github.com/bdobrica/ThinkPixelPlugin) and the existing gateway. Record actual paths, methods, authentication headers, schemas, response codes and examples in `contracts/` before writing implementation.
+- **Canonical behavior:** the existing API Gateway API, by operator decision. ThinkPixelPlugin differences are separate compatibility findings. Record actual paths, methods, authentication headers, schemas, response codes and examples in `contracts/` before writing implementation.
 - **Contract-first parity:** run one shared fixture suite against all three SDKs; test JWT renewal, 401 handling, timeouts, 429/5xx, invalid JSON, async store acknowledgement and search result fidelity.
 - **No backend redesign:** do not modify `/store`, `/search`, MySQL, NATS, Qdrant, embedding models, Terraform or FluxCD for SDK convenience. The only intentionally proposed backend addition is a narrow, reviewed registration endpoint and its necessary security controls.
 - **Publishing:** use PyPI, npm and Packagist only after packages are validated and separately versioned. Avoid implying that unregistered package names are already published.

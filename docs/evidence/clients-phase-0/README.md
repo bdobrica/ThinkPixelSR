@@ -5,6 +5,15 @@ CL-001–CL-007, recorded 2026-10-11. The
 ready for independent review. Gate 0 remains unchecked: no peer review or live
 WordPress compatibility result is asserted.
 
+## Subsequent operator decision
+
+On 2026-10-11 the operator selected the API Gateway API as the SDK source of
+truth and authorized Phase 1 despite plugin differences and the unexecuted
+smoke. The historical documentation-only CL-007 completion below has been
+superseded in the active checklist: CL-007 is now unchecked for deferred live
+acceptance. Gate 0 remains open. See the
+[Phase 1 decision and specification](../../clients/sdk-interface.md).
+
 ## Inspected inputs
 
 | Input | Revision / paths inspected |
