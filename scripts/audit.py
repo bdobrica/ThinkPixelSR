@@ -14,7 +14,8 @@ from config import ConfigError, FILES
 
 BASELINE = "9e5fc87495832d3a2554965341cbeb43911ff5f5"
 EDITABLE = {"README.md", "cluster/README.md", ".gitignore", "cluster/live/dev/terragrunt.hcl"}
-ADDITIONS = {".env.example", "Makefile", "AGENTS.md", "PLAN.md", "TODO.md"}
+ADDITIONS = {".env.example", "Makefile", "AGENTS.md", "PLAN.md", "TODO.md",
+             "clients/README.md", "clients/PLAN.md", "clients/TODO.md"}
 PATTERNS = (
     rb"-----BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY-----",
     rb"\bgh[pousr]_[A-Za-z0-9]{36,}\b",

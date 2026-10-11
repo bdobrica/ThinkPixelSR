@@ -269,6 +269,14 @@ class OperatorTests(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which("terragrunt"), "optional real Terragrunt forwarding check")
     def test_real_terragrunt_forwards_wrapper_commands_to_offline_terraform_stub(self):
+        # Keep older operator installations intact; doctor still rejects them
+        # for real wrapper operations. This optional test needs the run flags.
+        version = subprocess.run(["terragrunt", "--version"], capture_output=True,
+                                 text=True, timeout=15)
+        import re
+        match = re.search(r"v?(\d+)\.(\d+)\.(\d+)", version.stdout)
+        if version.returncode or not match or tuple(map(int, match.groups())) < (0, 96, 1):
+            self.skipTest("real forwarding requires Terragrunt >= 0.96.1; operator tool unchanged")
         binaries = self.repo / "bin"
         binaries.mkdir()
         records = self.repo / "commands.jsonl"

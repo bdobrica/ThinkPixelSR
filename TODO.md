@@ -2,6 +2,18 @@
 
 Follow [PLAN.md](PLAN.md). Check a box only after its acceptance evidence exists. Completed baseline documentation does not imply live validation or infrastructure changes. Keep items in dependency order; split work into small reviewable PRs. All live changes require explicit operator authorization.
 
+The [2026-10-11 operator-machine inspection](docs/evidence/phase-5/operator-machine.md)
+locates the original dev state and records approved read-only readiness checks,
+Flux fetch failure and subsequent verified recovery, wrapper prerequisites and
+repaired offline checks. Live `flux-check` and `status` pass after operator
+credential repair/reconciliation; mutating and end-to-end acceptance remain open.
+
+The [isolated dev plan review](docs/evidence/phase-5/dev-plan-review.md) now
+records successful private configuration/init and live node/storage/PDB review.
+The real plan failed on legacy DNS refresh and proposes replacing all five nodes;
+no apply receipt was created. Provider/API compatibility and any DNS-state
+migration require a separate review before deployment/scaling acceptance.
+
 ## Phase 0 — Verify what exists (baseline)
 
 - [x] **P0-01** Inventory `cluster/`, `k8s/`, `docker/`, `database/`, `local/`, `debug/`, `.github/workflows/`, existing manifests and scripts; record owners, commands, assumptions and pointers in `docs/architecture.md` (draft). **Done:** paths and dependency map correspond to checked-in files. [Evidence](docs/architecture.md).
@@ -31,7 +43,7 @@ Follow [PLAN.md](PLAN.md). Check a box only after its acceptance evidence exists
 - [x] **P3-01** Add `.DEFAULT_GOAL := help` (or equivalent) and `help`, `doctor`, `config-check`; ensure `make` alone cannot modify anything. **Done:** fixed recipes, self-documenting help and safe checks validated. [Evidence](docs/evidence/phase-3/README.md).
 - [x] **P3-02** Add `cluster-init` and `cluster-plan` wrappers selecting only known environment roots. **Done:** direct arguments and real Terragrunt forwarding to offline Terraform stub agree; previews execute no tools and no implicit apply. Live state/provider validation remains gated. [Evidence](docs/evidence/phase-3/README.md).
 - [ ] **P3-03** Add `cluster-up`, applying a reviewed plan with operator confirmation and explicit production guard. **Done:** deliberate dev apply validated; no unreviewed `-auto-approve`. **Implemented:** exact saved-plan hash/input/workspace binding, explicit confirmation, single attempt and prod block; offline guards pass. **Pending:** authorized real dev apply with authoritative state/credentials. [Evidence](docs/evidence/phase-3/README.md).
-- [ ] **P3-04** Add `flux-check`, then guarded `flux-bootstrap` matching existing Flux installation and Git source setup. **Done:** Flux starts reconciling without changing workload ownership. **Implemented:** read-only readiness and guarded checked-in overlay attachment to an existing operator, preserving old source/identities. **Pending:** initial operator/decryption prerequisites and authorized reconciliation/ownership verification. [Guide](docs/operations/commands.md#flux-readiness-and-guarded-attachment).
+- [ ] **P3-04** Add `flux-check`, then guarded `flux-bootstrap` matching existing Flux installation and Git source setup. **Done:** Flux starts reconciling without changing workload ownership. **Implemented:** read-only readiness and guarded checked-in overlay attachment to an existing operator, preserving old source/identities. **Verified:** live read-only wrapper prerequisites/root readiness and all six current-generation Kustomizations after operator credential repair/reconciliation. **Pending:** authorized guarded attachment and ownership verification; fresh decryption setup remains unverified. [Live evidence](docs/evidence/phase-5/operator-machine.md#recovery-after-operator-reconciliation), [guide](docs/operations/commands.md#flux-readiness-and-guarded-attachment).
 - [ ] **P3-05** Add `images-build` and `images-push` using existing Dockerfiles, architecture targets and registry/tag conventions; require explicit tags and credentials. **Done:** dev image push and pull reference verified without tag drift. **Implemented:** six exact contexts, both architectures, explicit checked-in Quay/version tags, private OCI export and guarded build/push; offline commands verified. **Pending:** authorized actual build/push/pull. [Evidence](docs/evidence/phase-3/README.md).
 - [x] **P3-06** Add `status`, offline `verify` and explicitly gated live smoke checks. **Done:** redacted readiness summaries, offline gates and opt-in HTTPS `verify-live` liveness/database checks; synthetic tests pass. Full writable API/plugin smoke remains separately authorized and unverified. [Guide](docs/operations/commands.md#explicit-live-health-and-full-smoke).
 - [ ] **P3-07** Add guarded `cluster-scale ENV=dev POOL=<name> COUNT=<n>` for existing worker pools only; show plan first and require explicit reduction acknowledgment. **Done:** scale-up reviewed; scale-down safeguards tested in dry-run and actual reductions only with authorization. **Implemented:** persisted existing-worker input validation, plan-only workflow, actual plan count checks, master block and deletion/reduction acknowledgments; synthetic safeguards pass. **Pending:** authorized scale-up plan/state review; no actual reduction performed. [Guide](docs/operations/commands.md#worker-scaling).
