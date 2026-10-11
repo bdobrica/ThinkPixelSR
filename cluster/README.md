@@ -1,5 +1,12 @@
 # Cluster Setup
 
+Use the current [Hetzner operator guide](../docs/deployment/hetzner.md) for
+root Make commands, state custody, approvals, kubeconfig and recovery, then the
+[Flux guide](../docs/deployment/fluxcd.md). The generic examples below are
+retained as inherited reference: they do not validate fresh bootstrap, and
+their master-count/pool examples are not the supported scaling procedure.
+The actual dev control plane has one master; do not change it during this makeover.
+
 > **Phase 1 migration status:** These are inherited instructions, not a verified
 > deployment runbook. ThinkPixelSR preserves the original infrastructure and
 > Flux identities. The continuation is published on GitHub; the old

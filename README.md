@@ -22,9 +22,9 @@ These describe the inherited implementation, not a commitment to add new functio
 ```mermaid
 flowchart LR
   WP[ThinkPixelPlugin / client] --> GW[API gateway]
-  AUTH[(MySQL: API keys)] --> GW
+  GW --> AUTH[(MySQL: sites and API keys)]
   GW -->|store| NATS[NATS ingestion queue]
-  NATS -->|consume| ING[Existing ingestion processing]
+  NATS -->|consume| ING[Subscriber inside gateway]
   ING --> EMB[Embedding model service]
   EMB --> Q[(Qdrant)]
   GW -->|search / embed query| EMB
@@ -32,7 +32,12 @@ flowchart LR
   GW -.->|optional ANN backend| R[(Redis / RediSearch)]
 ```
 
-The diagram is deliberately conceptual; use the manifests and code in this repository to establish exact service topology and APIs. The Redis option is **not** claimed to have parity with Qdrant hybrid search. MySQL, NATS, model serving, gateway, and retrieval responsibilities remain unchanged during this makeover.
+The gateway hosts HTTP handlers and the subscriber. A store response means
+enqueueing, not completed indexing; dev uses Core NATS without durable
+JetStream. Qdrant fuses dense and sparse retrieval with RRF. Redis follows its
+existing ANN path and also stores DLQ records; hybrid parity is not claimed.
+See [as-built architecture and persistence](docs/architecture.md) for exact
+topology and storage limits.
 
 ## Repository layout
 
@@ -52,86 +57,119 @@ ThinkPixelInfra.
 | `local/` | Local-development resources and mock site |
 | `debug/` | Debugging utilities |
 | `.github/workflows/` | Existing image-publishing automation, inventoried and preserved during import |
-| `docs/` | Phase 0 baseline, Phase 1 migration/evidence and draft verification; final operator guides follow in later phases |
+| `docs/` | As-built architecture, configuration, deployment/operations guides, migration and verification evidence |
 
 ## Getting started
 
-The inherited [cluster setup instructions](cluster/README.md) are now present
-locally. Read their migration caveat and the [infrastructure baseline](docs/baseline/infrastructure.md)
-before using them: production configuration is empty and authoritative state
-has not been located. The commands below are the **target experience**, not a
-claim that a root Makefile or `.env.example` already exists. Check
-[TODO.md](TODO.md) for implementation status before running them.
+From the repository root, start with credential-free discovery:
 
-For a credential-free entry point, the existing command is `make -C local help`.
-Local service startup and integration tests can mutate data; consult the
-[verification specification](docs/operations/verification.md) first.
+```bash
+make                         # help only
+make doctor                  # local versions; no access/authentication check
+make verify                  # offline checks with synthetic inputs
+```
+
+Read the [configuration guide](docs/configuration.md) and reference existing
+operator credentials/SSH keys through local paths:
+
+```bash
+cp .env.example .env
+# Reference existing operator credentials and SSH keys; choose dev explicitly.
+make config-check ENV=dev
+```
+
+An unconfigured checkout fails on the missing secret file. Production validation
+fails explicitly because its Terragrunt root is empty; it never falls back to
+dev. The validator does not deploy or authenticate.
+
+For deployment, follow [Hetzner](docs/deployment/hetzner.md), then
+[Flux attachment](docs/deployment/fluxcd.md) and
+[verification](docs/operations/verification.md). Authoritative state must be
+located before init/plan. Initial Flux Operator/decryption installation and
+compatible schema/index-node setup remain unresolved prerequisites for a fresh
+cluster; the docs identify these stop points. Live dev acceptance is pending.
+
+The inherited local entry point is `make -C local help`. Local startup/tests
+mutate data and have known schema/setup gaps; inspect verification before use.
 
 ### Prerequisites
 
-- Terraform and Terragrunt versions compatible with the checked-in configuration and lockfiles.
+- GNU Make and Python >=3.9; Terraform >=1.10 and Terragrunt >=0.96.1 for root infrastructure wrappers, preserving checked-in provider lockfiles.
 - Hetzner Cloud access and relevant DNS access; required cloud/DNS tokens.
 - SSH key material matching the current Terragrunt configuration.
-- `make`, a shell, `kubectl`, `flux`, and the existing container build/push tools as required by each operation.
+- kubectl with Kustomize for cluster/render commands; Docker Buildx and a prepared multi-platform builder for image commands. Flux CLI is optional; the wrappers use the existing Flux Operator.
 - A container registry and permission to push model images when publishing images.
 - A secure location for credentials and Terraform state; do not commit secrets, private SSH keys, `.env`, generated kubeconfigs, or state.
 
-### Intended operator workflow (to be implemented and validated)
+### Operator workflow (implemented; live dev acceptance pending)
 
 ```bash
 git clone https://github.com/bdobrica/ThinkPixelSR.git
 cd ThinkPixelSR
-cp .env.example .env
-# Edit .env; provision credentials/SSH keys using docs/configuration.md.
+# Configure existing credentials/SSH paths using docs/configuration.md.
 make help
 make doctor
-make config-check
-make cluster-plan ENV=dev
-make cluster-up ENV=dev             # explicit approval after reviewing plan
-make flux-bootstrap ENV=dev         # only after cluster access is verified
-make status ENV=dev
+make verify
+make config-check ENV=dev
+make cluster-plan ENV=dev DRY_RUN=1  # local configuration required; no tools run
+# Follow the command guide for state review, private artifacts and approval.
 ```
 
-The wrapper must preserve the existing Terragrunt input schema and FluxCD reconciliation model. Secrets may be referenced from `.env` **only as local paths or securely sourced environment values**; avoid expanding their contents into printed shell commands or logs. The precise variable names and bootstrap sequence must be documented after inspecting all source manifests and workflows.
+The `.env` schema accepts selector/credential/key paths; cluster inputs, Flux
+sources and image identities retain their existing authority. Do not source
+`.env` or expand credentials into logs. See the
+[command reference](docs/operations/commands.md) for invocation/approval details
+and [wrapper evidence](docs/evidence/phase-3/README.md) for offline coverage and
+remaining live gates. No actual apply, attach, push or scaling is authorized
+merely by the examples.
 
-### Planned operational targets
+### Implemented operational targets
 
 | Target | Expected meaning | Risk |
 | --- | --- | --- |
 | `help`, `doctor`, `config-check` | Discover tasks, check tools, validate local configuration | Read-only |
 | `cluster-init`, `cluster-plan` | Initialize and preview the chosen Terragrunt environment | No intentional infrastructure mutations (init may modify local metadata / backend setup) |
 | `cluster-up` | Apply a reviewed plan to create/update Hetzner infrastructure | Changes live resources |
-| `cluster-scale` | Change **worker-pool** capacity via existing inputs, show plan, require approval | Changes live resources; may remove nodes |
-| `flux-check`, `flux-bootstrap` | Inspect prerequisites; install/bootstrap existing GitOps setup when appropriate | Bootstrap changes cluster/Git state |
-| `images-build`, `images-push` | Build/publish existing model images with explicit tags | Push creates registry artifacts |
-| `status`, `verify` | Check health, configuration, and documented smoke path | Primarily read-only |
+| `cluster-scale` | Plan a persisted **worker-pool** count change; use guarded cluster-up after review | Plan only; later apply may replace/remove workers |
+| `flux-check`, `flux-bootstrap` | Inspect readiness; guarded attachment to an existing Flux operator | Attach can start workload reconciliation; no new Git source |
+| `images-build`, `images-push` | Export private multi-platform OCI archive / publish checked-in version tag | Build uses downloads/local artifacts; push may replace a registry tag |
+| `status`, `verify` | Summarize live readiness / run offline checks | Status requires explicit context; verify uses synthetic inputs |
+| `verify-live` | Opt-in HTTPS gateway liveness/database readiness | Reviewed dev endpoint only; no ingestion or plugin test |
 
-No default destroy target, no unconditional `terraform apply -auto-approve`, and no implicit worker-pool shrink. For scaling, prefer editing the **existing** worker pool counts and reviewing `make cluster-plan`; `cluster-scale` must be an explicit, guarded convenience wrapper around that procedure.
+No destroy target, no `-auto-approve`, and no implicit worker-pool shrink. Saved
+plans bind inputs and require their reviewed SHA plus explicit confirmation.
+Persist scaling changes in the existing worker input, inspect every affected
+pool, and acknowledge deletions/reductions. Live dev apply, reconciliation,
+image push/pull and scaling acceptance remain pending; prod is blocked.
 
 ## Documentation
 
-Phase 0 is recorded against the local ThinkPixelInfra source and separate plugin checkout:
+| Need | Guide |
+| --- | --- |
+| Understand request paths and data ownership | [As-built architecture](docs/architecture.md) |
+| Configure paths, credentials, precedence and dev/prod selection | [Configuration](docs/configuration.md) |
+| Find exact targets, approvals and side effects | [Make command reference](docs/operations/commands.md) |
+| Provision or reconnect dev safely | [Hetzner deployment](docs/deployment/hetzner.md) |
+| Check/attach existing Flux and inspect source ownership | [Flux deployment](docs/deployment/fluxcd.md) |
+| Build/publish versioned images and check platforms/digests | [Images](docs/operations/images.md) |
+| Review worker count changes, storage/drains and recovery | [Scaling](docs/operations/scaling.md) |
+| Run offline checks, health and actual WordPress acceptance | [Verification](docs/operations/verification.md) |
+| Diagnose infrastructure, GitOps, queue, models and retrieval | [Troubleshooting](docs/operations/troubleshooting.md) |
+| Preserve lineage, stage source cutover and switch back | [Migration](docs/migration.md) |
 
-- [Architecture draft and component inventory](docs/architecture.md).
-- [Infrastructure versions, dev/prod configuration and state preservation](docs/baseline/infrastructure.md).
-- [GitOps, storage, secrets and migration reference checklist](docs/baseline/gitops.md).
-- [Image build and publishing map](docs/baseline/images.md).
-- [Offline verification and API/WordPress smoke specification](docs/operations/verification.md).
-- [Observed evidence, frozen file inventory and live validation gaps](docs/evidence/phase-0/README.md).
-- [Repository coexistence, publication, GitOps cutover and rollback](docs/migration.md).
-- [Phase 1 import comparison and retained history](docs/evidence/phase-1/README.md).
+The guides reflect implemented commands and source behavior; they do not claim
+a completed live deployment/plugin run. Fresh bootstrap/schema prerequisites
+and all live acceptance gaps remain explicit. [Phase 4 evidence](docs/evidence/phase-4/README.md)
+records documentation checks and the deployment gate still awaiting verification.
 
-The baseline does not claim a successful live dev or WordPress run. The final operator
-guides below remain **planned deliverables**, tracked in [TODO.md](TODO.md):
-
-- `docs/architecture.md` — finalize the Phase 0 draft after implementation import and validation.
-- `docs/configuration.md` — `.env` contract, secret handling and mapping to existing configuration.
-- `docs/deployment/hetzner.md` — bootstrap and cluster provisioning.
-- `docs/deployment/fluxcd.md` — GitOps bootstrap, reconciliation, and troubleshooting.
-- `docs/operations/scaling.md` — safe worker-pool scaling and rollback.
-- `docs/operations/images.md` — building, tagging, and pushing model images.
-- `docs/operations/verification.md` — validate the Phase 0 smoke specification against the live plugin path.
-- `docs/operations/troubleshooting.md` — known diagnostics and operational recovery.
+Frozen inventories remain available for
+[infrastructure](docs/baseline/infrastructure.md),
+[GitOps/storage](docs/baseline/gitops.md) and
+[images](docs/baseline/images.md). Evidence covers
+[baseline and blockers](docs/evidence/phase-0/README.md),
+[retained history/import](docs/evidence/phase-1/README.md),
+[configuration](docs/evidence/phase-2/README.md) and
+[Make wrappers](docs/evidence/phase-3/README.md).
 
 ## Relationship to ThinkPixel
 

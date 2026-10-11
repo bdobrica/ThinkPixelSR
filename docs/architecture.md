@@ -1,4 +1,4 @@
-# Architecture baseline (Phase 0 draft)
+# As-built architecture
 
 This is the as-built **source inventory**, not evidence of a running deployment.
 P0-01 and P0-05 describe ThinkPixelInfra at commit
@@ -10,6 +10,9 @@ root; `../ThinkPixelInfra` remains the unchanged reference checkout. See the
 The [frozen source tree](https://github.com/bdobrica/ThinkPixelInfra/tree/9e5fc87495832d3a2554965341cbeb43911ff5f5)
 and [complete file inventory](evidence/phase-0/source-tree.tsv) identify that baseline.
 No accepted ADRs or published contracts were found in its tracked tree.
+Phase 4 checks this description against the imported source and the implemented
+[operator commands](operations/commands.md). Deployment and plugin smoke remain
+unverified; this document describes implementation, not production qualification.
 
 ## Responsibilities and command inventory
 
@@ -133,6 +136,53 @@ are different and do not establish a backup or storage failover guarantee.
 Gateway and Grafana are exposed through existing NodePorts and Terraform load
 balancer services, not a checked-in Ingress. Fluent Bit ships request logs to
 configured object storage; those logs and DLQ exports can contain payloads.
+
+| Data / owner | Dev Kubernetes persistence | Operational consequence |
+| --- | --- | --- |
+| MySQL site registrations, hashed keys, node allocation and dead-letter metadata | One `mysql` replica; `mysql-data` local-path RWO claim, 5Gi, `/var/lib/mysql` | Schema initialization and node records are external prerequisites. Preserve the bound PV/node and a verified database backup |
+| Qdrant vectors and document text | Three dev `qdrant` replicas; `qdrant-storage` local-path RWO claim template, 1Gi per replica | Replica count alone does not establish collection replication, backup or node-loss recovery |
+| Qdrant snapshots/restoration | Two additional 1Gi local-path RWO claim templates plus explicit `qdrant-snapshots` / `qdrant-snapshot-restoration` claim references | Inspect actual binding and mounts before relying on snapshots; no proven snapshot/restore runbook is checked in |
+| Redis ANN indexes and TTL DLQ records | Master/replica/sentinel deployments, no data PVC | Append-only configuration does not preserve data across pod/node replacement; Qdrant-backed sites still use Redis for the DLQ |
+| NATS ingestion | Core NATS, JetStream and clustering disabled | No durable queue/PVC guarantee; publication while the consumer is absent can lose work |
+| Gateway request/DLQ logs | `emptyDir`; Fluent Bit also uses `emptyDir` and exports to configured object storage | Local logs disappear with pods; exported logs and payloads require private custody |
+| Model assets | MPNetV2/Arctic image layers, no data PVC | Image pulls and available CPU/memory determine startup; weights are not cluster backups |
+| Grafana / Prometheus | RWO hostPath PVs, 5Gi `/mnt/data/grafana`, 10Gi `/mnt/data/prometheus` | Inspect node placement and PV binding; a matching directory on another node is not the original data |
+| Authentication material | External Git Secret, generated/reflected NATS TLS/nkey Secrets, checked-in SealedSecret ciphertext | Recovery requires original decryption keys and external credential custody; ciphertext alone is insufficient |
+| Infrastructure ownership | Terraform state in the operator's authoritative backend/cache/workspace | No remote backend is declared here; state is sensitive and must be located before init/plan |
+
+Local Compose instead has named MySQL, Qdrant and Redis volumes and a mock
+callback service. It uses different database/vector image versions and is not
+the dev Kubernetes topology. [Verification](operations/verification.md) records
+its schema/setup limitations.
+
+## Provisioning and GitOps ownership
+
+```mermaid
+flowchart TD
+    INPUT[Dev Terragrunt inputs + private credential/key files] --> TF[Existing Terraform modules]
+    TF --> HC[Hetzner network, firewall, nodes, load balancers, DNS/TLS]
+    HC --> K3S[K3s: one master, api and monitor workers]
+    OP[Existing Flux Operator + CRDs + Git/decryption credentials] --> FI[FluxInstance/flux]
+    OLD[ThinkPixelInfra main] --> FI
+    FI --> ROOT[Generated GitRepository and root Kustomization: flux-system]
+    ROOT --> RS[ResourceSets: apps, operator, notifications]
+    RS --> TEN[Tenant Kustomizations: cert-manager, reflector, nats, monitoring, thinkpixel]
+    TEN --> WORK[Existing Helm releases and application manifests]
+```
+
+The default dev master and four workers are `cax21` (ARM64); `api` has three
+workers, `monitor` one. Cloud-init installs unpinned K3s, uses user `cluster`,
+joins nodes over SSH, and taints workers with the configured domain/pool.
+Workload tolerations do not prove exclusive pool placement. All worker pools
+share one Terraform count-indexed resource: changing api can replace monitor
+nodes. [Scaling](operations/scaling.md) requires review of every affected node.
+
+The root Make interface selects existing roots and delegates to those tools.
+Its Flux attach applies only the root overlay to an already installed operator;
+tenant reconciliation remains Flux-owned. The Git source and notification
+destination still reference ThinkPixelInfra. Publishing ThinkPixelSR or selecting
+ENV does not switch that source. See [Hetzner deployment](deployment/hetzner.md),
+[Flux ownership](deployment/fluxcd.md) and [controlled migration](migration.md).
 
 Manual prerequisites remain cloud/DNS credentials, SSH keys, state custody,
 cluster access, Flux Operator/CRDs, Git credentials, Sealed Secrets controller

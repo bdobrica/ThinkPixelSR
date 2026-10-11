@@ -1,12 +1,73 @@
-# Phase 0 verification and smoke specification — P0-05 / P0-06
+# Verification and API/WordPress smoke
 
-This is a baseline specification against [the frozen source](../architecture.md),
+This is an operator specification against [the as-built source](../architecture.md),
 not a report of successful deployment. [Evidence](../evidence/phase-0/README.md)
-records what actually ran and why live checks did not run. No root `make verify`,
-`doctor` or `config-check` exists yet. These procedures do not authorize a live
+records what actually ran and why live checks did not run. Root `make verify`,
+`doctor`, `config-check` and opt-in `verify-live` now exist; see the
+[command guide](commands.md). Offline wrapper checks do not establish the live
+baseline described here. These procedures do not authorize a live
 test, installation, SQL migration or repository cutover.
 
-## Offline reproduction
+## Current checkout checks and dev acceptance
+
+From ThinkPixelSR, without operator credentials:
+
+```bash
+make help
+make doctor
+make verify
+```
+
+Help lists actual root targets. Doctor checks binary versions without service
+access; it can fail when a tool for a command family is missing. Verify runs
+synthetic configuration/wrapper tests, syntax/format/render/link gates and
+reports optional-tool skips. It contacts no real backend, Docker daemon,
+cluster or API. The forwarding test uses real Terragrunt with a fake Terraform
+in a temporary fixture. Full runtime/model tests are not part of this command.
+
+With existing local credentials configured, `make config-check ENV=dev` should
+pass without authenticating. `make config-check ENV=prod` should fail explicitly;
+there is no dev fallback. To preview actual arguments locally, use the DRY_RUN
+examples in the [command reference](commands.md). No production setup is
+implemented. Documentation syntax/render success is not live acceptance.
+
+For an explicitly authorized dev lifecycle, use the guides in this order:
+
+1. [Configuration](../configuration.md), then authoritative state/key/DNS review
+   and [Hetzner init/plan/reviewed apply](../deployment/hetzner.md).
+2. Existing operator/CRD/decryption/credential prerequisites, then
+   [Flux attachment and revision checks](../deployment/fluxcd.md). Stop at any
+   missing bootstrap or schema prerequisite; do not invent an installer/migration.
+3. Verify [exact image platforms, published digest and cluster pulls](images.md),
+   secret decryption, PVC binding, and every tenant/workload. No push is needed
+   merely to test an already approved image; publishing is a separate live action.
+4. Run redacted status and the opt-in health check below. Then perform the
+   disposable-site API and **actual plugin** checks in this guide.
+5. Record sanitized assertions with checkout/plugin revision, effective deployed
+   image tags/digests, Flux applied revision, schema prerequisite status and
+   fixture IDs. Compare to the source baseline; record every failure/blocker.
+
+```bash
+make status ENV=dev KUBE_CONTEXT='<verified-dev-context>'
+make verify-live ENV=dev API_URL='https://<reviewed-dev-gateway>:8080' LIVE_REVIEWED=1 DRY_RUN=1
+make verify-live ENV=dev API_URL='https://<reviewed-dev-gateway>:8080' LIVE_REVIEWED=1
+```
+
+The live health target validates HTTPS, refuses redirects and checks GET /ping
+and /ready with bounded time/response size. It requires status ok and database
+healthy readiness. It does not inspect NATS, models, Qdrant, Redis or WordPress,
+authenticate, ingest or delete. Those acceptance gates remain separate.
+Context and endpoint must refer to the same reviewed dev installation.
+
+Do not continue a writable smoke after unexplained source/image drift, broken
+state/ownership, missing storage/backups, pending secret decryption or an
+unsettled consumer. Stop after a bounded retrieval failure; keep private logs
+and only scoped fixture cleanup. Repository/source rollback follows
+[migration](../migration.md); node/data recovery follows the deployment/scaling
+guides and existing backups. A successful health check is insufficient to
+approve cutover or declare recovered data.
+
+## Frozen baseline reproduction
 
 Use a **tracked-only temporary export** of ThinkPixelInfra commit
 `9e5fc87495832d3a2554965341cbeb43911ff5f5`, not a copy including ignored local
@@ -36,8 +97,10 @@ kubectl kustomize --load-restrictor=LoadRestrictionsNone k8s/apps/reflector/dev 
 The last three require permissive loading because they reference individual
 files outside their overlay directory. That is a local render observation, not
 an instruction to relax cluster security or evidence of Flux success. The
-Terragrunt formatting check currently fails for the dev HCL; empty prod overlays
-fail rendering. No init/apply/bootstrap is needed for these checks.
+frozen dev HCL formatting check fails; the current Phase 2 dev HCL passes.
+Empty prod overlays fail rendering. No init/apply/bootstrap is needed for
+these checks. These statements concern the frozen export, not a new failed
+check on the current checkout.
 
 From `docker/api_gateway/api_gateway` in the export:
 
@@ -101,7 +164,8 @@ and text is required; a mere HTTP 200 or plugin indexing mark is insufficient.
 The fixture store and retrieval are writable live actions. The following shows
 the inspected API invocation without embedding secrets in shell commands; it
 has not been executed. Run from ThinkPixelSR after authorization. Set
-`P0_API_URL` to the reviewed dev endpoint. Supply `P0_AUTH_CURL_CONFIG` as an
+`P0_API_URL` to the reviewed dev HTTPS origin (including its verified port,
+with no userinfo, path, query or fragment). Supply `P0_AUTH_CURL_CONFIG` as an
 existing private curl config containing only the X-API-Key header for the
 disposable site (mode 0600, outside both repositories). No shell tracing or
 curl verbosity should be enabled.
@@ -111,7 +175,7 @@ umask 077
 P0_RUN_DIR=$(mktemp -d)
 : "${P0_API_URL:?Set the authorized dev gateway URL}"
 : "${P0_AUTH_CURL_CONFIG:?Set the private API-key curl config path}"
-curl --fail --silent --show-error --max-time 30 \
+curl --proto '=https' --fail --silent --show-error --max-time 30 \
   --config "$P0_AUTH_CURL_CONFIG" -X POST "$P0_API_URL/auth/token" \
   --output "$P0_RUN_DIR/auth.json"
 # Derive the private Bearer-header curl config without printing the token.
@@ -123,11 +187,11 @@ if not isinstance(token, str) or not token or any(c in token for c in '\r\n"\\')
     raise SystemExit('Invalid token response')
 (root / 'bearer.conf').write_text('header = "Authorization: Bearer ' + token + '"\n')
 PY
-curl --fail --silent --show-error --max-time 30 \
+curl --proto '=https' --fail --silent --show-error --max-time 30 \
   --config "$P0_RUN_DIR/bearer.conf" -H 'Content-Type: application/json' \
   --data-binary @docs/evidence/phase-0/store.json "$P0_API_URL/store" \
   --output "$P0_RUN_DIR/store.json" --write-out '%{http_code}\n'
-curl --fail --silent --show-error --max-time 30 \
+curl --proto '=https' --fail --silent --show-error --max-time 30 \
   --config "$P0_RUN_DIR/bearer.conf" -H 'Content-Type: application/json' \
   --data-binary @docs/evidence/phase-0/search.json "$P0_API_URL/search" \
   --output "$P0_RUN_DIR/search.json" --write-out '%{http_code}\n'
@@ -145,7 +209,7 @@ After confirming processing has stopped for both fixture IDs, cleanup uses the
 same private bearer config and **only** the two IDs:
 
 ```bash
-curl --fail --silent --show-error --max-time 30 \
+curl --proto '=https' --fail --silent --show-error --max-time 30 \
   --config "$P0_RUN_DIR/bearer.conf" -H 'Content-Type: application/json' \
   --data-binary @docs/evidence/phase-0/remove.json "$P0_API_URL/remove/embeddings" \
   --output "$P0_RUN_DIR/remove.json" --write-out '%{http_code}\n'
@@ -160,6 +224,11 @@ Never delete all collections, wipe shared volumes, or run the inherited broad
 cleanup trap. Only sanitized assertions/counts belong in Git.
 
 ## WordPress plugin golden path (separate acceptance test)
+
+This records the existing client flow inspected in the separate repository;
+it is not a claim that a live known-good run has been reproduced. The actual
+plugin test is required even after a passing direct API smoke. Existing queue,
+model and Qdrant diagnostic commands are in [troubleshooting](troubleshooting.md).
 
 The available separate plugin checkout is SearchPixel v1.4.5 at
 `b8f64d05cbe11a58dbf7f7dcee0f5dce271d7d63`. Its gateway URL is compiled into
@@ -195,4 +264,4 @@ gateway `pending_ids`; partial publication must be verified separately. The
 batch-size guidance handler has a context-type/schema mismatch (blocker B14); record
 the plugin's fallback sizing rather than claiming that endpoint passed. Live
 WordPress, registration, indexing, retrieval and deletion are all **unverified**
-in Phase 0. A real known-good comparison remains a Phase 5 gate.
+in this makeover. A real known-good comparison remains a Phase 5 gate.

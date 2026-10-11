@@ -39,14 +39,18 @@ Follow [PLAN.md](PLAN.md). Check a box only after its acceptance evidence exists
 
 ## Phase 4 — Write operator documentation against actual commands
 
-- [ ] **P4-01** Finalize `docs/architecture.md` with accurate as-built diagram, Qdrant/Redis distinction and data persistence map.
-- [ ] **P4-02** Write `docs/configuration.md`: `.env` variable reference, sources of truth, credential paths, precedence and dev/prod examples.
-- [ ] **P4-03** Write `docs/deployment/hetzner.md`: prerequisites, SSH/DNS/state, first deploy, plan/apply, health and rollback.
-- [ ] **P4-04** Write `docs/deployment/fluxcd.md`: bootstrap inputs, Git source management, reconciliation, troubleshooting and cutover.
-- [ ] **P4-05** Write `docs/operations/images.md`: supported images, build platform, registry push, tags and pinning.
-- [ ] **P4-06** Write `docs/operations/scaling.md`: worker pools, PDB/storage checks, worker scale-up/down, plan review and recovery.
-- [ ] **P4-07** Write `docs/operations/verification.md` and `docs/operations/troubleshooting.md`, including the working plugin golden path and queue/model/Qdrant diagnostics.
-- [ ] **P4-08** Refresh root README: replace all "planned" command caveats only for commands implemented and validated; link every durable guide. **Done:** an unfamiliar operator can locate the correct runbook.
+Documentation tasks are complete; the PLAN deployment gate remains pending
+external bootstrap/schema prerequisites and authorized live dev/plugin validation.
+[Documentation evidence and precise limits](docs/evidence/phase-4/README.md).
+
+- [x] **P4-01** Finalize `docs/architecture.md` with accurate as-built diagram, Qdrant/Redis distinction and data persistence map. **Done:** source-reviewed request/provisioning/GitOps diagrams and persistence/ownership table. [Guide](docs/architecture.md).
+- [x] **P4-02** Write `docs/configuration.md`: `.env` variable reference, sources of truth, credential paths, precedence and dev/prod examples. **Done:** seven-key contract, separate Make arguments, dev path example and explicit prod rejection. [Guide](docs/configuration.md).
+- [x] **P4-03** Write `docs/deployment/hetzner.md`: prerequisites, SSH/DNS/state, first deploy, plan/apply, health and rollback. **Done:** implemented guarded commands, existing/new state review, kubeconfig and recovery limits; fresh application bootstrap/schema stop points explicit. [Guide](docs/deployment/hetzner.md).
+- [x] **P4-04** Write `docs/deployment/fluxcd.md`: bootstrap inputs, Git source management, reconciliation, troubleshooting and cutover. **Done:** existing-operator attach, prerequisite order, owners/revisions, retained old source and controlled switch-back link. [Guide](docs/deployment/fluxcd.md).
+- [x] **P4-05** Write `docs/operations/images.md`: supported images, build platform, registry push, tags and pinning. **Done:** six exact contexts/versions, both platforms, private OCI/push workflow, digest/pull checks and mutable-tag/recovery limits. [Guide](docs/operations/images.md).
+- [x] **P4-06** Write `docs/operations/scaling.md`: worker pools, PDB/storage checks, worker scale-up/down, plan review and recovery. **Done:** persisted existing-worker plans, all-pool replacement risk, private placement/PV/PDB reads and reduction/recovery gates. [Guide](docs/operations/scaling.md).
+- [x] **P4-07** Write `docs/operations/verification.md` and `docs/operations/troubleshooting.md`, including the working plugin golden path and queue/model/Qdrant diagnostics. **Done:** current checks and source-inspected SearchPixel procedure with scoped fixtures/cleanup; real live known-good comparison remains unverified. [Verification](docs/operations/verification.md), [diagnostics](docs/operations/troubleshooting.md).
+- [x] **P4-08** Refresh root README: replace all "planned" command caveats only for commands implemented and validated; link every durable guide. **Done:** task-to-guide index, real quick start and truthful offline/live/bootstrap status. [Entry point](README.md).
 
 ## Phase 5 — Validate, migrate, close
 

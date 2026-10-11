@@ -65,9 +65,9 @@ These consumers retain their existing authority:
 | Hetzner/DNS credentials | `.secrets.hcl` `inputs.hcloud_token` / `inputs.hetznerdns_token` → sensitive Terraform variables and providers | Reference one private file; no inline `.env` tokens or new credential lifecycle |
 | Domain, aliases, prefix, region, OS, master/worker counts/types, admin IPs, exposed apps | Dev Terragrunt base inputs, then `.secrets.hcl` overrides → existing Terraform modules | No duplicate `.env` settings or resource renames |
 | Flux environment/domain, Git URL/ref/path, pull secret | `k8s/flux-system/dev/kustomization.yaml` and base FluxInstance/runtime ConfigMap/ResourceSets | Unchanged; ENV selection does not template or rewrite manifests |
-| Registry, platforms, image names/tags | Existing workflow, Dockerfiles, version files, K8s overlays and Compose | Unchanged; no new `.env` image keys |
+| Registry, platforms, image names/tags | Existing workflow, Dockerfiles, version files, K8s overlays and Compose | Unchanged; Make image arguments must match checked-in namespace/version; no new `.env` keys |
 | Application auth, MySQL/NATS/Qdrant/Redis credentials | Existing local/application configuration and Kubernetes Secret/SealedSecret references | Unchanged; no propagation from this operator `.env` |
-| Kubeconfig, contexts, state/backend/workspace | Existing operator custody; no implicit context or state selection | No guessed default, generated credentials or backend changes |
+| Kubeconfig, contexts, state/backend/workspace | Existing operator custody; explicit Make KUBE_CONTEXT and state review | No guessed default, generated credentials or backend changes; OPERATOR_DIR holds artifacts only |
 
 ## Precedence and format
 
@@ -110,6 +110,64 @@ trailing data and multiline values fail. Quotes are delimiters, not shell syntax
 `$HOME`, `${...}`, `$(...)`, backticks, backslashes and `~` remain literal text.
 Use a complete actual path. Do not `source .env`, use Make `include .env`, or
 generate shell assignments from it. No raw input is echoed on parse failure.
+
+## Dev and prod examples
+
+An illustrative dev `.env` referencing an existing private operator directory
+is shown below. Replace every path locally; these files are not provided. The
+public keys must match the cluster's existing private keys.
+
+```dotenv
+ENV=dev
+SECRETS_FILE=/private/operator/dev/.secrets.hcl
+MASTER_PUBLIC_KEY_FILE=/private/operator/dev/.master.key.pub
+MASTER_PRIVATE_KEY_FILE=/private/operator/dev/.master.key
+WORKER_PUBLIC_KEY_FILE=/private/operator/dev/.worker.key.pub
+WORKER_PRIVATE_KEY_FILE=/private/operator/dev/.worker.key
+MANAGEMENT_PUBLIC_KEY_FILE=/private/operator/dev/.management.key.pub
+```
+
+Run `make config-check ENV=dev`; expect local validation success only. If
+the files already reside at their original dev paths, leave the six path
+values blank. Never overwrite tracked public keys to configure an existing
+cluster without reviewing the identity change.
+
+The production selection example is intentionally a failure check:
+
+```bash
+make config-check ENV=prod
+make cluster-plan ENV=prod DRY_RUN=1
+```
+
+Both exit nonzero without falling back to dev. Do not supply dev files to make
+prod pass: its empty Terragrunt configuration and missing Flux root need a
+separate approved implementation.
+
+## Make arguments outside the dotenv schema
+
+These names are accepted by the root Make interface as process/command-line
+arguments. Putting them in `.env` produces an unknown-key error. Empty/unset
+approval flags grant no permission. Details and side effects are in the
+[command reference](operations/commands.md).
+
+| Argument | Consumer and requirement | Sensitivity / authority |
+| --- | --- | --- |
+| `DRY_RUN` | Operation previews; `1` skips external execution, `0` or unset uses the target's normal guards | Preview is not live validation |
+| `OPERATOR_DIR` | Actual init/plan/apply, Flux attach, image build/push; existing absolute private directory outside checkout | Contains sensitive output; no backend selection |
+| `STATE_REVIEWED` | Actual infrastructure operations; `1` after backend/cache/workspace custody review | Acknowledgment, not state discovery or cloud authorization |
+| `REVIEWED_SHA`, `CONFIRM` | Apply needs exact saved-plan SHA and `apply-dev`; Flux attach uses `bootstrap-dev`; image push uses `push` | Binds approval to the operation; no secret values |
+| `POOL`, `COUNT`, `CURRENT_COUNT` | Scale plan: existing api/monitor, positive desired and observed counts | Desired count must already be persisted in effective HCL; current count comes from authoritative state |
+| `REDUCTION_REVIEWED`, `REPLACEMENTS_REVIEWED` | Explicit `1` for relevant scale plans / worker-deletion apply | Requires workload/storage/drain review; does not drain nodes |
+| `KUBE_CONTEXT` | All live cluster targets; explicit verified dev context | Kubeconfig remains in tool custody; context must match selected environment |
+| `GITOPS_REVIEWED` | Flux attach needs `1` after source/owner/decryption review | Does not install operator or generate credentials |
+| `IMAGE`, `REGISTRY`, `TAG` | Image targets: one supported image, `quay.io/bdobrica`, checked-in version | No mutable latest, automatic tag bump or manifest rewrite |
+| `API_URL`, `LIVE_REVIEWED` | verify-live: reviewed HTTPS origin and explicit `1` | Endpoint kept out of output; health only |
+
+`KUBECONFIG`, `TF_WORKSPACE` and Docker authentication are existing tool inputs,
+not dotenv keys. Plans bind the workspace into their receipt. Wrappers reject
+unvalidated Terraform/Terragrunt overrides; a custom backend/CLI setup may need
+the separately reviewed direct workflow. The operator must verify that context,
+workspace, endpoint and credentials refer to the same authorized dev installation.
 
 ## Secret-file contract and checks
 
@@ -166,7 +224,8 @@ public `.key.pub` files, lockfiles and existing SealedSecrets remain visible.
 Ignore patterns cannot detect credentials saved under arbitrary filenames or
 remove already tracked secrets. Never upload rendered Terragrunt JSON, plans,
 state or cloud-init: inherited private SSH variables are not marked sensitive.
-Avoid shell tracing and unreviewed tool/debug output.
+Avoid shell tracing and unreviewed tool/debug output. Root `make -n` prints
+only fixed Python recipes; credential/path values are not interpolated into them.
 
 ## Common failures and verification
 
