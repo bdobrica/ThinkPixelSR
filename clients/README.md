@@ -2,7 +2,7 @@
 
 Official, small language clients for the existing [ThinkPixelSR](../README.md) Search/RAG gateway. The goal is to make the working integration demonstrated by [ThinkPixelPlugin](https://github.com/bdobrica/ThinkPixelPlugin) available to other applications without requiring developers to implement the HTTP authentication and ingestion/search flow themselves.
 
-> **Status: Phase 1 interface specified; Phase 2 registration proposal ready for review. Gates 0–2 remain pending.** The Python, TypeScript and PHP packages, sample calls and public registration flow described here are target capabilities, **not** evidence that SDKs or new API endpoints exist. See [PLAN.md](PLAN.md) and [TODO.md](TODO.md). See the [source-audited wire baseline](contracts/README.md) and its explicit live-test gaps and the [SDK interface specification](../docs/clients/sdk-interface.md) before coding.
+> **Status:** the [Python SDK](python/README.md) implements existing-key authentication, store and search (unpublished 0.1.0). TypeScript/PHP and registration remain planned. Gates 0–3 and live acceptance remain open. The operator authorized jumping to Phase 4A and deferring key assignment; see [PLAN.md](PLAN.md) and [TODO.md](TODO.md).
 
 ## Scope
 
@@ -23,7 +23,7 @@ clients/
 ├── PLAN.md
 ├── TODO.md
 ├── contracts/             # Source-audited API baseline and synthetic fixtures
-├── python/                # Python package and examples (planned)
+├── python/                # Python package, tests and examples
 ├── typescript/            # Node.js TS package (planned)
 └── php/                   # Composer package and examples (planned)
 ```
@@ -42,7 +42,7 @@ All three SDKs should expose the same **conceptual** operations, while following
 | Search indexed documents | `search(...)` | `search(...)` | `search(...)` |
 | Register a new API key | `register_key(...)` | `registerKey(...)` | `registerKey(...)` |
 
-**Core signatures are specified in the Phase 1 interface document, not implemented code.** Registration signatures remain deferred until Gate 2. Automatic authentication on the first protected request is encouraged, with an explicit method for operators who need it.
+**Python core methods are implemented; other language signatures remain specified.** Registration signatures remain deferred until Gate 2. Automatic authentication on the first protected request is encouraged, with an explicit method for operators who need it.
 
 ### Client configuration
 

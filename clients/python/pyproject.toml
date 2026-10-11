@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling>=1.26,<2", "editables>=0.5,<1"]
+build-backend = "hatchling.build"
+
+[project]
+name = "thinkpixel-sr"
+version = "0.1.0"
+description = "Synchronous Python client for the ThinkPixelSR gateway"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+dependencies = ["httpx>=0.27,<1"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "ruff>=0.9,<1", "mypy>=1.14,<2", "build>=1,<2", "bump2version==1.0.1"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/thinkpixel_sr"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]

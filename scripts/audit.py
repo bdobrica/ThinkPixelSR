@@ -16,7 +16,10 @@ BASELINE = "9e5fc87495832d3a2554965341cbeb43911ff5f5"
 EDITABLE = {"README.md", "cluster/README.md", ".gitignore", "cluster/live/dev/terragrunt.hcl"}
 ADDITIONS = {".env.example", "Makefile", "AGENTS.md", "PLAN.md", "TODO.md",
              "clients/README.md", "clients/PLAN.md", "clients/TODO.md",
-             "clients/contracts/README.md"}
+             "clients/contracts/README.md",
+             "clients/python/.gitignore", "clients/python/.bumpversion.cfg",
+             "clients/python/pyproject.toml", "clients/python/README.md",
+             "clients/python/CHANGELOG.md", "clients/python/LICENSE", "clients/python/src/thinkpixel_sr/py.typed"}
 PATTERNS = (
     rb"-----BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY-----",
     rb"\bgh[pousr]_[A-Za-z0-9]{36,}\b",
@@ -100,7 +103,9 @@ def audit(repo):
     candidates.update(p.decode() for p in git(repo, "ls-files", "--others", "--exclude-standard", "-z").split(b"\0") if p)
     for name in sorted(candidates):
         contract_fixture = name.startswith("clients/contracts/fixtures/") and name.endswith(".json")
-        if name not in baseline and name not in ADDITIONS and not contract_fixture and not name.startswith(("docs/", "scripts/", "tests/")):
+        python_sdk = name.endswith(".py") and name.startswith((
+            "clients/python/src/thinkpixel_sr/", "clients/python/tests/", "clients/python/examples/"))
+        if name not in baseline and name not in ADDITIONS and not contract_fixture and not python_sdk and not name.startswith(("docs/", "scripts/", "tests/")):
             raise ConfigError("audit: new candidate outside the reviewed makeover paths")
         path = repo / name
         if path.is_symlink() or not path.is_file():

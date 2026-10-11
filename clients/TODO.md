@@ -67,12 +67,20 @@ No generic enrollment endpoint or live rollout has been added.
 
 ## Phase 4A — Python SDK
 
-- [ ] **CL-027** Create `python/` package, `pyproject.toml`, supported runtime policy and local development commands.
-- [ ] **CL-028** Implement configured HTTP transport, safe request handling, API-key→JWT flow and token management.
-- [ ] **CL-029** Implement `/store` and `/search` mapped to verified fixtures and response types.
-- [ ] **CL-030** Implement registration call(s) only against the approved public server contract.
-- [ ] **CL-031** Add pytest contract, edge/error and mock tests; type/lint checks.
-- [ ] **CL-032** Write Python install, safe credential handling, full usage examples and package build check.
+- [x] **CL-027** Create `python/` package, `pyproject.toml`, supported runtime policy and local development commands.
+- [x] **CL-028** Implement configured HTTP transport, safe request handling, API-key→JWT flow and token management.
+- [x] **CL-029** Implement `/store` and `/search` mapped to verified fixtures and response types.
+- [ ] **CL-030** Implement registration call(s) only against the approved public server contract. Deferred by operator: existing keys suffice for current scope.
+- [x] **CL-031** Add pytest contract, edge/error and mock tests; type/lint checks.
+- [x] **CL-032** Write Python install, safe credential handling, full usage examples and package build check.
+
+**Operator sequencing exception (2026-10-11):** jump to Python existing-key
+store/search; defer Phase 2 and registration. Explicit `api_key` overrides the
+`THINKPIXEL_API_KEY` process environment fallback. Gates 0–3 remain open; Python
+mock tests do not complete shared registration scenarios or staging acceptance.
+**CL-027–CL-029, CL-031–CL-032 evidence:** [package and local commands](python/README.md),
+[verification and runtime/deadline limits](../docs/evidence/clients-python/README.md).
+Version 0.1.0 was assigned using bump2version; no package was published.
 
 ## Phase 4B — TypeScript SDK
 

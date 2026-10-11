@@ -101,6 +101,15 @@ Provide scrubbed fixtures and mock-server/HTTP test cases for successful exchang
 
 ### Python
 
+**Operator sequencing decision (2026-10-11):** proceed directly to Phase 4A
+for existing-key `/store` and `/search`, deferring Phase 2 key assignment and
+CL-030 registration. Implement the relevant offline contract cases within the
+Python package despite open Gates 0–3; these gates and live acceptance stay open.
+Python accepts an explicit key or, when omitted, `THINKPIXEL_API_KEY` from the
+process environment. No server, schema or plugin changes are authorized.
+Use bump2version for independent SDK versions; publication remains separate.
+
+
 Typed package targeting a documented supported Python range, lightweight mainstream HTTP client, sync interface first. Provide `pyproject.toml`, pytest, type checking/linting, examples, packaging metadata and PyPI publication plan. Do not add async API until demand warrants it.
 
 ### TypeScript

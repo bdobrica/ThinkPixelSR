@@ -52,6 +52,7 @@ ThinkPixelInfra.
 | --- | --- |
 | `cluster/` | Hetzner provisioning with Terraform/Terragrunt; environment roots in `cluster/live/dev` and `cluster/live/prod` |
 | `k8s/` | Kubernetes declarations and FluxCD-managed workloads |
+| `clients/` | [Python SDK](clients/python/README.md) for existing-key store/search; other languages and registration planned |
 | `docker/` | API gateway, embedding models, Redis Sentinel, and WordPress image/configuration assets |
 | `database/` | MySQL schema and migration artifacts |
 | `local/` | Local-development resources and mock site |

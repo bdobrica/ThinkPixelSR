@@ -1,7 +1,8 @@
 # SDK interface specification — Phase 1
 
 CL-008–CL-013 design requirements for future Python, TypeScript and PHP SDKs.
-No packages or executable examples are shipped by this phase. Gate 1 review
+Phase 1 itself shipped no packages. The subsequent [Python SDK](../../clients/python/README.md)
+implements the existing-key subset under the operator sequencing exception. Gate 1 review
 remains pending. The [gateway wire baseline](../../clients/contracts/README.md)
 and [synthetic fixtures](../../clients/contracts/fixtures/index.json) describe
 server behavior at gateway revision `89fe1899b7f008cbd30cf073e0f748e1529d7519`;
@@ -21,8 +22,10 @@ This does not authorize gateway/plugin changes, enrollment exposure or release.
 ## CL-008: configuration and public operations
 
 One `ThinkPixelSRClient` per gateway/key, synchronous Python/PHP and asynchronous
-TypeScript. Construction performs no I/O. Key and origin are required; no default
-public origin or environment-variable auto-discovery. Applications inject secrets.
+TypeScript. Construction performs no I/O. Origin is required with no default public origin. Applications inject secrets.
+For Python, the later operator decision permits `api_key=None` to read
+`THINKPIXEL_API_KEY`; an explicit key takes precedence. Other languages retain
+explicit-key configuration.
 
 | Concept | Python | TypeScript | PHP |
 | --- | --- | --- | --- |
@@ -240,3 +243,12 @@ registration, store/search requests, database writes or plugin edits occurred.
 0.81.0. Configuration checks returned expected exit 2 for missing dev secret
 file, unsupported prod, and missing/invalid environment selection. No real
 credentials were used and no fallback or mutation occurred.
+
+## Python implementation limits
+
+Python accepts a caller-owned deadline-aware transport adapter. Its default HTTPX
+transport receives the remaining shared budget and rejects late responses, but
+HTTPX phase/inactivity timeouts do not provide hard wall-clock interruption of
+streaming peers or DNS. This limitation is documented rather than claimed as
+full conformance to the deadline target above. Registration and live parity
+remain deferred. See the Python package evidence for actual runtime coverage.
