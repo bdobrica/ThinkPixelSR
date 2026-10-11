@@ -1,0 +1,115 @@
+# PLAN — ThinkPixelSR language clients
+
+## 1. Objective
+
+Add `clients/` to ThinkPixelSR to provide reliable, idiomatic **Python, TypeScript and PHP** libraries for the existing Search/RAG API. Match the behavior of the working [ThinkPixelPlugin](https://github.com/bdobrica/ThinkPixelPlugin): API-key authentication, key-to-JWT exchange, document submission and document search. Add a narrowly scoped, secure **public API-key registration flow** because obtaining a first key cannot be solved by client libraries alone.
+
+This is a **client usability initiative with one explicit server-side dependency**. It is not permission to redesign the working gateway, database, ingestion, indexing, retrieval or infrastructure architecture. This plan is subordinate to the repository's [root architectural invariants](../PLAN.md) except where the public registration endpoint is deliberately approved as a scoped addition.
+
+## 2. Principles and non-goals
+
+1. **Wire compatibility first:** inspect gateway routes and the WordPress plugin's live request/response implementation. Preserve existing operations, names and semantics.
+2. **Minimal SDKs:** thin HTTP facades, not frameworks, generated microservices or alternate client-side search engines.
+3. **One contract, three idiomatic languages:** shared test vectors, shared semantics and recognizable names; native exceptions/types and package conventions.
+4. **Safe credentials:** no secrets in repos, query strings, browser bundles or normal logs; TLS, configurable timeouts and limited retries.
+5. **Preserve async ingestion:** `/store` success must be represented as accepted/enqueued if that is what the gateway actually reports. Do not promise read-after-write consistency.
+6. **Registration is different from authentication:** enrollment must create a new credential under server-side authorization/verification; key exchange must only issue JWTs for existing authorized keys.
+7. **No opportunistic endpoint expansion:** no new delete/update/list/bulk/index-status APIs without a separate approved plan. Batch operations may use the existing contract only if confirmed.
+8. **Do not mutate plugin or server code for SDK ergonomics** unless necessary for the explicitly approved registration feature or to fix a documented compatibility defect with separate authorization.
+
+## 3. Phase 0 — Verify the real protocol
+
+Inspect the **source** of `docker/api_gateway` and the ThinkPixelPlugin client implementation (including PHP classes, hooks and tests). Capture:
+
+- API root/base URL rules, TLS requirements, API versioning and routing.
+- Exact API-key-to-JWT endpoint, method, headers, body, JWT response and expiry semantics.
+- `/store` and `/search` methods, required fields, document identity, metadata, supported filters/options, accepted status, error payloads and response structure.
+- Tenant/site/key ownership rules and permission boundaries.
+- Retry behavior, idempotency support or lack of it, actual error codes and rate-limit indicators.
+- Current API-key provisioning workflow, schema, hashing/storage and administrative controls.
+
+Write `clients/contracts/README.md` and sanitized JSON fixtures with a source location/commit reference. Resolve inconsistencies by preserving actual working plugin behavior and recording decisions, not by guessing a “cleaner” contract. Obtain an integration environment or record test gaps.
+
+**Gate 0:** protocol and sample fixture evidence reviewed. Do not lock public SDK signatures or claim example payloads work before this gate.
+
+## 4. Phase 1 — Define the SDK contract
+
+Proposed logical interface: `authenticate`, `store`, `search`, `register_key`/`registerKey`. Map exact arguments/responses after Gate 0. Define:
+
+- Config: gateway `base_url`, key, timeout, optional transport/HTTP client, optional user-agent.
+- Lazy token exchange; in-memory JWT cache; expiry-aware reuse if the server provides lifetime; re-authenticate on demand. JWTs are **not** written to disk automatically.
+- Refresh by repeat API-key exchange, **not** an invented refresh-token endpoint. At most one re-auth attempt after 401; never infinite loops.
+- Retries: no automatic store retry if delivery could have succeeded and idempotency is unverified; narrow retry policy for demonstrably safe requests and only with bounded backoff.
+- Store outcome mapped without conflating `accepted` with `indexed`; return server IDs/status and raw metadata where available.
+- Search filters/query options limited to verified server support; preserve ranking/result fields and unknown metadata as appropriate.
+- Typed error hierarchy for auth, permission, validation, rate limiting, transport, server and registration failures; avoid leaking secrets in messages.
+- Cancellation/timeouts and hooks for HTTP mocking according to language conventions.
+
+**Gate 1:** parity matrix and common fixture/test requirements approved.
+
+## 5. Phase 2 — Design and add secure public key registration
+
+### 5.1 Critical distinction
+
+“Public endpoint” means callable without an **existing** API key/JWT. It does **not** authorize anonymous users to mint unlimited, privileged keys. Before implementing, choose and document the business policy: invitation token, email/domain verification, existing account authentication via a distinct proof, human approval, or controlled self-service. For MVP, prefer an operator-issued **single-use, expiring invitation** if no identity/verification mechanism already exists; don't introduce a new full identity service merely to support the SDKs.
+
+### 5.2 Proposed contract (not yet an existing endpoint)
+
+- Candidate route: `POST /register` or a versioned equivalent **subject to the gateway's actual routing conventions**.
+- Input: registration proof and minimum necessary key-owner/site metadata. Field names and JSON are **TBD** pending Gate 0 and threat-model review.
+- Output: a securely generated key disclosed once on success, or a pending/verification state; never expose another user's keys.
+- Errors: consistent validation, unauthorized/invalid proof, replay, rate-limit, conflict and service failure semantics. Suppress sensitive enrollment-detail enumeration.
+- Provisioning: use existing MySQL API-key model/authorization boundaries where possible; key length/entropy, scope, tenant binding, expiration, revocation and hashing/storage must be reviewed in the existing implementation.
+- Security: TLS only outside local development; short-lived one-time proofs; replay protection; rate limits/abuse monitoring; no permissive CORS by default; no key values in logs; registration disabled by default until configured; auditable creation and revocation.
+- Deployment: only minimal gateway config/secrets/migration changes as needed, adhering to existing Flux and config conventions; no second key database or external signup service.
+
+An invitation code that merely moves an unlimited admin secret to client-side source is **not** acceptable. The server must enforce per-invitation limits, identity/owner binding and scoped rights. If policy requires user interaction, SDKs may expose `begin_registration` and `complete_registration` instead of promising a single request.
+
+**Gate 2:** threat model, owner/scope policy, endpoint specification, compatibility, abuse controls and tests reviewed **before any public exposure**. Registration must be disabled or inaccessible if required controls are absent.
+
+## 6. Phase 3 — Shared test contracts
+
+Provide scrubbed fixtures and mock-server/HTTP test cases for successful exchange, invalid/expired key, JWT expiry, store accepted/not indexed, search, empty results, client errors, bad JSON, 429 and transient 5xx/timeouts. Use one cross-language behavior matrix, with no real key committed. Establish optional live integration tests against non-production staging. Include registration invitation success, expiration, reuse, unauthorized enrollment and revocation/disable behavior.
+
+**Gate 3:** all required scenarios are specified and runnable in CI/offline where possible.
+
+## 7. Phase 4 — Implement Python, TypeScript and PHP
+
+### Python
+
+Typed package targeting a documented supported Python range, lightweight mainstream HTTP client, sync interface first. Provide `pyproject.toml`, pytest, type checking/linting, examples, packaging metadata and PyPI publication plan. Do not add async API until demand warrants it.
+
+### TypeScript
+
+ESM-first package with clear declared Node.js support; typed request/results, `fetch` or a small injectable transport, tests, build and npm metadata. Define Node/browser support honestly. Never advocate placing persistent privileged API keys in client-shipped JS. Do not require frontend framework dependencies.
+
+### PHP
+
+Composer-distributed library with namespaces and a documented supported PHP range; prefer PSR-18/PSR-17-compatible transport if practical without heavy dependencies. Use PHPUnit, PHPStan (or equivalent), short WordPress-compatible usage examples and a clear explanation that it does **not** replace ThinkPixelPlugin.
+
+Build the languages sequentially, stabilizing shared fixtures before each port. Avoid cross-language generated SDK code if it complicates the MVP more than hand-maintained thin clients.
+
+**Gate 4:** each client passes identical semantics tests, idiomatic static checks and at least one non-production store→eventual-search integration scenario (or explicitly documented environment block).
+
+## 8. Phase 5 — Documentation, CI and releases
+
+- Language-specific installation and quickstarts with verified request/response data.
+- Registration instructions for deployment operators (enablement/invitations/revocation) and SDK users (proof handling); explain no-first-key bootstrap before endpoint is enabled.
+- Troubleshooting: HTTP errors, expired key/JWT, ingestion delay, rate limits, TLS, CORS and async indexing.
+- CI matrix for unit, contract and build tests; protected secrets for optional staging tests. No live tests against production.
+- License, maintainers, releases/changelogs and independently versioned packages; PyPI/npm/Packagist names subject to availability and verification.
+- Update root README to link to `clients/` and root TODO to track this approved extension.
+
+**Gate 5 / definition of done:** all three SDKs demonstrated against verified existing `/store` and `/search`; registration validated end-to-end with abuse controls; existing WordPress plugin remains functional; no architectural changes except the explicitly scoped public endpoint; docs, CI and security review complete.
+
+## 9. Known decisions to record
+
+- Exact existing auth endpoint and token expiry format (source audit required).
+- Existing `/store` and `/search` payloads, validation and IDs (source audit required).
+- Definition of owner/tenant and who may register an API key.
+- Public enrollment policy and whether verification is synchronous or two-stage.
+- Whether current MySQL schema can express single-use invitations without migration.
+- Node/Python/PHP minimum supported versions and package ownership/names.
+- Whether browser-side TypeScript is supported at all for API-key-backed calls.
+
+Do not silently choose these details in SDK code. Track decisions in the contract notes or a short ADR and update this plan only when decisions are accepted.
