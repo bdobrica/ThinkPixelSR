@@ -1,5 +1,16 @@
 # Cluster Setup
 
+> **Phase 1 migration status:** These are inherited instructions, not a verified
+> deployment runbook. ThinkPixelSR preserves the original infrastructure and
+> Flux identities. GitHub publication/access is not yet verified; the old
+> ThinkPixelInfra repository remains available. Before initializing a migrated
+> checkout, locate and preserve the authoritative Terraform state and existing
+> credentials/SSH keys; do not create replacement keys for an existing cluster.
+> `cluster/live/prod/terragrunt.hcl` is empty and cannot deploy production.
+> Terraform requires `>= 1.10.0`; no Terragrunt CLI version is pinned.
+> See the [migration guide](../docs/migration.md) and
+> [infrastructure baseline](../docs/baseline/infrastructure.md) for limitations.
+
 This repository provides a Terraform configuration to deploy a cluster on Hetzner Cloud using the Hetzner provider (v~> 1.48). The configuration is organized into multiple modules that manage networking, load balancing, and the provisioning of master and worker nodes.
 
 ## Overview
@@ -28,12 +39,15 @@ Before using this configuration, ensure that you have:
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/bdobrica/ThinkPixelInfra.git
-cd ThinkPixelInfra/cluster/live/dev
+git clone https://github.com/bdobrica/ThinkPixelSR.git
+cd ThinkPixelSR/cluster/live/dev
 ```
 
-- There are two live environments: dev and prod. The dev environment is used for testing and development, while the prod environment is for production deployments.
-- If you want to deploy to the prod environment, navigate to the `prod` directory instead.
+- The clone command is for use after the new GitHub remote has been published
+  and verified. During coexistence, the original ThinkPixelInfra clone remains
+  usable; this rename does not switch Flux or migrate infrastructure state.
+- The environment directories are `dev` and `prod`; only dev has configuration.
+  Do not substitute dev settings for the empty production environment.
 
 ### Create Required SSH Keys
 
@@ -51,7 +65,8 @@ ssh-keygen -t ecdsa -b 521 -C "management@<cluster_domain>" -f .management.key
 
 ### Add Hetzner API Token
 
-Create a .secrets.hcl file in the [cluster/live/{dev,prod}](./infra/live/dev) directory with the following content:
+Create a .secrets.hcl file in the selected configured environment, currently
+[cluster/live/dev](./live/dev), with the following content:
 
 ```hcl
 inputs = {

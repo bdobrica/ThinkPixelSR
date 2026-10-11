@@ -1,0 +1,109 @@
+path	document	kind	name	namespace	images
+k8s/apps/cert-manager/base/helmrelease.yaml	1	HelmRelease	cert-manager	cert-manager	-
+k8s/apps/cert-manager/base/helmrepository.yaml	1	HelmRepository	cert-manager	cert-manager	-
+k8s/apps/cert-manager/dev/kustomization.yaml	1	Kustomization	-	-	-
+k8s/apps/cert-manager/dev/values.yaml	1	values / patch data	-	-	-
+k8s/apps/monitoring/base/grafana/configmap.yaml	1	ConfigMap	grafana-datasources	-	-
+k8s/apps/monitoring/base/grafana/deployment.yaml	1	Deployment	grafana	-	grafana/grafana:11.5.1
+k8s/apps/monitoring/base/grafana/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/monitoring/base/grafana/persistent-volume.yaml	1	PersistentVolume	grafana-pv	-	-
+k8s/apps/monitoring/base/grafana/persistent-volume.yaml	2	PersistentVolumeClaim	grafana-pvc	-	-
+k8s/apps/monitoring/base/grafana/sealed-secret.yaml	1	SealedSecret	grafana-secret	-	-
+k8s/apps/monitoring/base/grafana/service.yaml	1	Service	grafana	-	-
+k8s/apps/monitoring/base/node-exporter/daemon-set.yaml	1	DaemonSet	node-exporter	-	prom/node-exporter:v1.8.2
+k8s/apps/monitoring/base/node-exporter/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/monitoring/base/node-exporter/service.yaml	1	Service	node-exporter	monitoring	-
+k8s/apps/monitoring/base/prometheus/configmap.yaml	1	ConfigMap	prometheus-config	-	-
+k8s/apps/monitoring/base/prometheus/deployment.yaml	1	Deployment	prometheus	-	prom/prometheus:v3.1.0
+k8s/apps/monitoring/base/prometheus/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/monitoring/base/prometheus/persistent-volume.yaml	1	PersistentVolume	prometheus-pv	-	-
+k8s/apps/monitoring/base/prometheus/persistent-volume.yaml	2	PersistentVolumeClaim	prometheus-pvc	-	-
+k8s/apps/monitoring/base/prometheus/sealed-secret.yaml	1	SealedSecret	prometheus-secret	-	-
+k8s/apps/monitoring/base/prometheus/service-account.yaml	1	ServiceAccount	prometheus	-	-
+k8s/apps/monitoring/base/prometheus/service-account.yaml	2	ClusterRole	prometheus	-	-
+k8s/apps/monitoring/base/prometheus/service-account.yaml	3	ClusterRoleBinding	prometheus	-	-
+k8s/apps/monitoring/base/prometheus/service.yaml	1	Service	prometheus	monitoring	-
+k8s/apps/monitoring/dev/grafana-sealed-secret.yaml	1	SealedSecret	grafana-secret	-	-
+k8s/apps/monitoring/dev/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/monitoring/dev/prometheus-sealed-secret.yaml	1	SealedSecret	prometheus-secret	monitoring	-
+k8s/apps/monitoring/prod/kustomization.yaml	0	EMPTY	-	-	-
+k8s/apps/nats/base/helmrelease.yaml	1	HelmRelease	nats	-	-
+k8s/apps/nats/base/helmrepository.yaml	1	HelmRepository	nats	-	-
+k8s/apps/nats/dev/certificate.yaml	1	Certificate	nats	-	-
+k8s/apps/nats/dev/issuer.yaml	1	Issuer	nats	-	-
+k8s/apps/nats/dev/kustomization.yaml	1	Kustomization	-	-	-
+k8s/apps/nats/dev/nats-nkey-sealed-secret.yaml	1	SealedSecret	nats-nkey-secret	nats	-
+k8s/apps/nats/dev/values.yaml	1	values / patch data	-	-	-
+k8s/apps/reflector/base/helmrelease.yaml	1	HelmRelease	reflector	-	-
+k8s/apps/reflector/base/helmrepository.yaml	1	HelmRepository	reflector	-	-
+k8s/apps/reflector/dev/kustomization.yaml	1	Kustomization	-	-	-
+k8s/apps/reflector/dev/values.yaml	1	values / patch data	-	-	-
+k8s/apps/thinkpixel/base/api-gateway/configmap.yaml	1	ConfigMap	api-gateway-config	-	-
+k8s/apps/thinkpixel/base/api-gateway/configmap.yaml	2	ConfigMap	fluent-bit-config	-	-
+k8s/apps/thinkpixel/base/api-gateway/deployment.yaml	1	Deployment	api-gateway	-	quay.io/bdobrica/thinkpixel-api-gateway-multi:0.7.1,fluent/fluent-bit:3.2.6
+k8s/apps/thinkpixel/base/api-gateway/dlq-config.yaml	1	ConfigMap	api-gateway-dlq-config	thinkpixel	-
+k8s/apps/thinkpixel/base/api-gateway/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/base/api-gateway/sealed-secret.yaml	1	SealedSecret	api-gateway-secret	-	-
+k8s/apps/thinkpixel/base/api-gateway/sealed-secret.yaml	2	SealedSecret	fluent-bit-secret	-	-
+k8s/apps/thinkpixel/base/api-gateway/service.yaml	1	Service	api-gateway	-	-
+k8s/apps/thinkpixel/base/api-gateway/service.yaml	2	Service	fluent-bit-metrics	-	-
+k8s/apps/thinkpixel/base/ml-model/autoscaling.yaml	1	PodDisruptionBudget	ml-model	-	-
+k8s/apps/thinkpixel/base/ml-model/autoscaling.yaml	2	HorizontalPodAutoscaler	ml-model	-	-
+k8s/apps/thinkpixel/base/ml-model/deployment.yaml	1	Deployment	ml-model	-	quay.io/bdobrica/thinkpixel-model-multi:0.1.6
+k8s/apps/thinkpixel/base/ml-model/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/base/ml-model/service.yaml	1	Service	ml-model	-	-
+k8s/apps/thinkpixel/base/mysql/configmap.yaml	1	ConfigMap	mysql-config	-	-
+k8s/apps/thinkpixel/base/mysql/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/base/mysql/sealed-secret.yaml	1	SealedSecret	mysql-secret	-	-
+k8s/apps/thinkpixel/base/mysql/service.yaml	1	Service	mysql	-	-
+k8s/apps/thinkpixel/base/mysql/stateful-set.yaml	1	StatefulSet	mysql	-	percona/percona-server:8.0.40-31.1-multi
+k8s/apps/thinkpixel/base/qdrant/configmap.yaml	1	ConfigMap	qdrant-config	-	-
+k8s/apps/thinkpixel/base/qdrant/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/base/qdrant/sealed-secret.yaml	1	SealedSecret	qdrant-secret	thinkpixel	-
+k8s/apps/thinkpixel/base/qdrant/service-account.yaml	1	ServiceAccount	qdrant	-	-
+k8s/apps/thinkpixel/base/qdrant/service.yaml	1	Service	qdrant	-	-
+k8s/apps/thinkpixel/base/qdrant/stateful-set.yaml	1	StatefulSet	qdrant	-	docker.io/qdrant/qdrant:v1.13.4,docker.io/qdrant/qdrant:v1.13.4
+k8s/apps/thinkpixel/base/redis/secrets/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/base/redis/secrets/sealed-secret.yaml	1	SealedSecret	redis-secret	-	-
+k8s/apps/thinkpixel/base/redis/sentinel/configmap.yaml	1	ConfigMap	redis-masters	-	-
+k8s/apps/thinkpixel/base/redis/sentinel/deployment.yaml	1	Deployment	redis-sentinel	-	busybox:1.35,redis/redis-stack:latest
+k8s/apps/thinkpixel/base/redis/sentinel/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/base/redis/sentinel/service.yaml	1	Service	redis-sentinel	-	-
+k8s/apps/thinkpixel/base/redis/shard/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/base/redis/shard/master/deployment.yaml	1	Deployment	redis-master	-	redis/redis-stack:latest
+k8s/apps/thinkpixel/base/redis/shard/master/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/base/redis/shard/master/service.yaml	1	Service	redis-master	-	-
+k8s/apps/thinkpixel/base/redis/shard/replica/deployment.yaml	1	Deployment	redis-replica	-	redis/redis-stack:latest
+k8s/apps/thinkpixel/base/redis/shard/replica/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/base/secrets/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/base/secrets/quay-io-sealed-secret.yaml	1	SealedSecret	quay-io-secret	-	-
+k8s/apps/thinkpixel/base/wordpress/deployment.yaml	1	Deployment	wordpress	-	wordpress:5.8-apache
+k8s/apps/thinkpixel/base/wordpress/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/dev/api-gateway/api-gateway-sealed-secret.yaml	1	SealedSecret	api-gateway-secret	-	-
+k8s/apps/thinkpixel/dev/api-gateway/fluent-bit-sealed-secret.yaml	1	SealedSecret	fluent-bit-secret	-	-
+k8s/apps/thinkpixel/dev/api-gateway/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/dev/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/dev/models/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/dev/models/mpnetv2/kustomization.yaml	1	Kustomization (implicit)	-	-	quay.io/bdobrica/thinkpixel-mpnetv2-multi:0.3.5
+k8s/apps/thinkpixel/dev/models/snowflake-arctic/kustomization.yaml	1	Kustomization (implicit)	-	-	quay.io/bdobrica/thinkpixel-snowflake-arctic-multi:0.1.13
+k8s/apps/thinkpixel/dev/mysql/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/dev/mysql/mysql-sealed-secret.yaml	1	SealedSecret	mysql-secret	-	-
+k8s/apps/thinkpixel/dev/qdrant/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/dev/qdrant/qdrant-sealed-secret.yaml	1	SealedSecret	qdrant-secret	-	-
+k8s/apps/thinkpixel/dev/qdrant/stateful-set-patch.yaml	1	StatefulSet	qdrant	-	-
+k8s/apps/thinkpixel/dev/redis/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/dev/redis/redis-sealed-secret.yaml	1	SealedSecret	redis-secret	-	-
+k8s/apps/thinkpixel/dev/redis/sentinel-01/configmap-patch.yaml	1	ConfigMap	redis-masters	-	-
+k8s/apps/thinkpixel/dev/redis/sentinel-01/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/dev/redis/shard-01/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/dev/secrets/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/apps/thinkpixel/dev/secrets/quay-io-sealed-secret.yaml	1	SealedSecret	quay-io-secret	-	-
+k8s/apps/thinkpixel/prod/kustomization.yaml	0	EMPTY	-	-	-
+k8s/apps/thinkpixel/prod/patches.yaml	0	EMPTY	-	-	-
+k8s/flux-system/base/flux-instance.yaml	1	FluxInstance	flux	flux-system	-
+k8s/flux-system/base/flux-notification.yaml	1	ResourceSet	flux-notifications	flux-system	-
+k8s/flux-system/base/flux-operator.yaml	1	ResourceSet	flux-operator	flux-system	-
+k8s/flux-system/base/flux-runtime-info.yaml	1	ConfigMap	flux-runtime-info	flux-system	-
+k8s/flux-system/base/kustomization.yaml	1	Kustomization (implicit)	-	-	-
+k8s/flux-system/base/tenant-apps.yaml	1	ResourceSet	apps	flux-system	-
+k8s/flux-system/dev/kustomization.yaml	1	Kustomization (implicit)	-	-	-

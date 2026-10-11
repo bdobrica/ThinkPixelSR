@@ -1,0 +1,14 @@
+[
+  {
+    "id": 900001,
+    "text": "The orange lighthouse in Example Harbor opens at nine in the morning.",
+    "language": "en",
+    "extra": {"title": "Phase 0 Orange Lighthouse", "type": "post"}
+  },
+  {
+    "id": 900002,
+    "text": "The violet library in Example Town closes at six in the evening.",
+    "language": "en",
+    "extra": {"title": "Phase 0 Violet Library", "type": "post"}
+  }
+]
