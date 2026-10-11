@@ -49,6 +49,14 @@ remains open for independent review; SDK code and contract tests are later phase
 - [ ] **CL-021** Add gateway tests: success, absent/invalid/expired/replayed proof, tenant isolation, disabled mode, rate limit, key secrecy and revocation.
 - [ ] **CL-022** Deploy and exercise registration in a restricted non-production environment; do not expose production enrollment by default.
 
+**CL-014–CL-019 review proposal:** [registration policy, threat model and endpoint design](../docs/clients/key-registration.md).
+These tasks remain unchecked: policies are proposed, not approved; operator
+controls are specified, not implemented. Existing auth storage cannot enforce
+single-use proofs without an additive migration. Gate 2 must approve that change
+and the proposed revocation enforcement before CL-020. CL-020–CL-022 remain
+blocked on that review and a separately authorized restricted environment.
+No generic enrollment endpoint or live rollout has been added.
+
 ## Phase 3 — Contract testing (Gate 3)
 
 - [ ] **CL-023** Establish shared mocked HTTP scenarios and sanitized fixtures for auth, store, search and registration.

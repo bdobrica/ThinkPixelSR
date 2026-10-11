@@ -68,19 +68,28 @@ before implementation. Independent approval remains pending.
 
 “Public endpoint” means callable without an **existing** API key/JWT. It does **not** authorize anonymous users to mint unlimited, privileged keys. Before implementing, choose and document the business policy: invitation token, email/domain verification, existing account authentication via a distinct proof, human approval, or controlled self-service. For MVP, prefer an operator-issued **single-use, expiring invitation** if no identity/verification mechanism already exists; don't introduce a new full identity service merely to support the SDKs.
 
-### 5.2 Proposed generic SDK contract (existing callback enrollment is separate)
+### 5.2 Concrete proposal for Gate 2 review
 
-- Candidate route: `POST /register` or a versioned equivalent **subject to the gateway's actual routing conventions**.
-- Input: registration proof and minimum necessary key-owner/site metadata. Field names and JSON are **TBD** pending Gate 0 and threat-model review.
-- Output: a securely generated key disclosed once on success, or a pending/verification state; never expose another user's keys.
-- Errors: consistent validation, unauthorized/invalid proof, replay, rate-limit, conflict and service failure semantics. Suppress sensitive enrollment-detail enumeration.
-- Provisioning: use existing MySQL API-key model/authorization boundaries where possible; key length/entropy, scope, tenant binding, expiration, revocation and hashing/storage must be reviewed in the existing implementation.
-- Security: TLS only outside local development; short-lived one-time proofs; replay protection; rate limits/abuse monitoring; no permissive CORS by default; no key values in logs; registration disabled by default until configured; auditable creation and revocation.
-- Deployment: only minimal gateway config/secrets/migration changes as needed, adhering to existing Flux and config conventions; no second key database or external signup service.
+The [Phase 2 registration proposal](../docs/clients/key-registration.md) records
+CL-014–CL-019: operator-approved, site-bound single-use invitations; a separate
+`POST /register/key` preserving callback `/register`; exact proposed JSON/status
+mapping; transactional consumption; shared abuse controls; secret-free audit;
+and disabled-by-default rollout. These are review proposals, not implemented
+contracts or approved business policy.
 
-An invitation code that merely moves an unlimited admin secret to client-side source is **not** acceptable. The server must enforce per-invitation limits, identity/owner binding and scoped rights. If policy requires user interaction, SDKs may expose `begin_registration` and `complete_registration` instead of promising a single request.
+Source inspection finds that the current schema cannot enforce one-time
+invitations atomically. The proposed additive MySQL ledger and audit/rate state
+require separate migration approval under root AGENTS.md. Prompt revocation
+also requires a reviewed auth-path change because the current cache trusts keys
+until expiry. Neither change is silently authorized by SDK ergonomics.
+Existing keys authorize more than store/search; reviewers must accept those
+rights or separately approve scope enforcement before enrollment implementation.
 
-**Gate 2:** threat model, owner/scope policy, endpoint specification, compatibility, abuse controls and tests reviewed **before any public exposure**. Registration must be disabled or inaccessible if required controls are absent.
+**Gate 2:** approve owner/privilege policy, endpoint, threat model, persistence,
+revocation, abuse controls and rollout before CL-020 implementation. The request
+to work on Phase 2 starts design review; it does not constitute approval of an
+as-yet unspecified migration or public exposure. CL-020–CL-022 remain pending.
+Registration must stay disabled/inaccessible until controls and tests pass.
 
 ## 6. Phase 3 — Shared test contracts
 

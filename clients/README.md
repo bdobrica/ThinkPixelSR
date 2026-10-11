@@ -2,7 +2,7 @@
 
 Official, small language clients for the existing [ThinkPixelSR](../README.md) Search/RAG gateway. The goal is to make the working integration demonstrated by [ThinkPixelPlugin](https://github.com/bdobrica/ThinkPixelPlugin) available to other applications without requiring developers to implement the HTTP authentication and ingestion/search flow themselves.
 
-> **Status: Phase 1 interface specified; Gates 0 and 1 review pending.** The Python, TypeScript and PHP packages, sample calls and public registration flow described here are target capabilities, **not** evidence that SDKs or new API endpoints exist. See [PLAN.md](PLAN.md) and [TODO.md](TODO.md). See the [source-audited wire baseline](contracts/README.md) and its explicit live-test gaps and the [SDK interface specification](../docs/clients/sdk-interface.md) before coding.
+> **Status: Phase 1 interface specified; Phase 2 registration proposal ready for review. Gates 0–2 remain pending.** The Python, TypeScript and PHP packages, sample calls and public registration flow described here are target capabilities, **not** evidence that SDKs or new API endpoints exist. See [PLAN.md](PLAN.md) and [TODO.md](TODO.md). See the [source-audited wire baseline](contracts/README.md) and its explicit live-test gaps and the [SDK interface specification](../docs/clients/sdk-interface.md) before coding.
 
 ## Scope
 
@@ -71,7 +71,7 @@ The model/embedding and vector search path remains entirely server-side; clients
 
 ## Public key registration (planned server dependency)
 
-The existing `POST /register` initiates WordPress site validation and delivers a key through callbacks; it does not return an API key directly. A generic SDK enrollment contract remains planned. *Publicly reachable must not mean unrestricted self-issuance of credentials.* The design and acceptance gate are in [PLAN.md](PLAN.md).
+The existing `POST /register` initiates WordPress site validation and delivers a key through callbacks; it does not return an API key directly. A generic SDK enrollment contract remains planned. *Publicly reachable must not mean unrestricted self-issuance of credentials.* The [concrete registration proposal](../docs/clients/key-registration.md) specifies invitation policy, wire format, threats and rollout controls for Gate 2 review. It requires separately approved persistence and revocation changes; see [PLAN.md](PLAN.md).
 
 Proposed lifecycle:
 
