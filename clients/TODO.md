@@ -84,11 +84,18 @@ Version 0.1.0 was assigned using bump2version; no package was published.
 
 ## Phase 4B — TypeScript SDK
 
-- [ ] **CL-033** Create `typescript/` package with explicit Node support, TypeScript build/types and npm metadata.
-- [ ] **CL-034** Implement transport, JWT exchange/cache, `/store` and `/search` with typed results.
-- [ ] **CL-035** Add approved registration workflow and constrained renewal/error handling.
-- [ ] **CL-036** Add shared contract tests, lint/build checks, and timeout/cancellation tests.
-- [ ] **CL-037** Document server-side key safety, optional browser restrictions, CORS and complete Node usage examples.
+- [x] **CL-033** Create `typescript/` package with explicit Node support, TypeScript build/types and npm metadata.
+- [x] **CL-034** Implement transport, JWT exchange/cache, `/store` and `/search` with typed results.
+- [ ] **CL-035** Add approved registration workflow and constrained renewal/error handling. Registration deferred by operator; existing-key renewal/error handling is covered by CL-034/CL-036.
+- [x] **CL-036** Add shared contract tests, lint/build checks, and timeout/cancellation tests.
+- [x] **CL-037** Document server-side key safety, optional browser restrictions, CORS and complete Node usage examples.
+
+**Operator sequencing exception (2026-10-11):** implement TypeScript with the
+same existing-key scope as Python; defer key assignment and CL-035. Explicit
+`apiKey` overrides `THINKPIXEL_API_KEY`. Gates 0–3 and live acceptance stay open.
+**CL-033–CL-034, CL-036–CL-037 evidence:** [package and commands](typescript/README.md),
+[tests, packaging, runtime coverage and limits](../docs/evidence/clients-typescript/README.md).
+Independent version 0.1.0 was assigned using bump2version; nothing was published.
 
 ## Phase 4C — PHP SDK
 

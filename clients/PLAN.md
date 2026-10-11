@@ -114,6 +114,12 @@ Typed package targeting a documented supported Python range, lightweight mainstr
 
 ### TypeScript
 
+**Operator sequencing decision (2026-10-11):** implement Phase 4B with the same
+existing-key scope as Python. Defer CL-035 registration and keep Gates 0–3 and
+live acceptance open. Omitted `apiKey` reads `THINKPIXEL_API_KEY`; explicit keys
+win. Use bump2version for the independent SDK version. No server changes,
+publication or browser credential support are authorized.
+
 ESM-first package with clear declared Node.js support; typed request/results, `fetch` or a small injectable transport, tests, build and npm metadata. Define Node/browser support honestly. Never advocate placing persistent privileged API keys in client-shipped JS. Do not require frontend framework dependencies.
 
 ### PHP

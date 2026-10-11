@@ -17,6 +17,10 @@ EDITABLE = {"README.md", "cluster/README.md", ".gitignore", "cluster/live/dev/te
 ADDITIONS = {".env.example", "Makefile", "AGENTS.md", "PLAN.md", "TODO.md",
              "clients/README.md", "clients/PLAN.md", "clients/TODO.md",
              "clients/contracts/README.md",
+             "clients/typescript/.gitignore", "clients/typescript/.bumpversion.cfg",
+             "clients/typescript/package.json", "clients/typescript/package-lock.json",
+             "clients/typescript/tsconfig.json", "clients/typescript/tsconfig.examples.json",
+             "clients/typescript/README.md", "clients/typescript/CHANGELOG.md", "clients/typescript/LICENSE",
              "clients/python/.gitignore", "clients/python/.bumpversion.cfg",
              "clients/python/pyproject.toml", "clients/python/README.md",
              "clients/python/CHANGELOG.md", "clients/python/LICENSE", "clients/python/src/thinkpixel_sr/py.typed"}
@@ -105,7 +109,10 @@ def audit(repo):
         contract_fixture = name.startswith("clients/contracts/fixtures/") and name.endswith(".json")
         python_sdk = name.endswith(".py") and name.startswith((
             "clients/python/src/thinkpixel_sr/", "clients/python/tests/", "clients/python/examples/"))
-        if name not in baseline and name not in ADDITIONS and not contract_fixture and not python_sdk and not name.startswith(("docs/", "scripts/", "tests/")):
+        typescript_sdk = (name.endswith(".ts") and name.startswith((
+            "clients/typescript/src/", "clients/typescript/examples/"))) or (
+            name.endswith(".test.mjs") and name.startswith("clients/typescript/tests/"))
+        if name not in baseline and name not in ADDITIONS and not contract_fixture and not python_sdk and not typescript_sdk and not name.startswith(("docs/", "scripts/", "tests/")):
             raise ConfigError("audit: new candidate outside the reviewed makeover paths")
         path = repo / name
         if path.is_symlink() or not path.is_file():

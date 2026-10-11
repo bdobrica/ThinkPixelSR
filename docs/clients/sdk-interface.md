@@ -1,8 +1,8 @@
 # SDK interface specification — Phase 1
 
 CL-008–CL-013 design requirements for future Python, TypeScript and PHP SDKs.
-Phase 1 itself shipped no packages. The subsequent [Python SDK](../../clients/python/README.md)
-implements the existing-key subset under the operator sequencing exception. Gate 1 review
+Phase 1 itself shipped no packages. The subsequent [Python SDK](../../clients/python/README.md) and
+[TypeScript SDK](../../clients/typescript/README.md) implement the existing-key subset under the operator sequencing exception. Gate 1 review
 remains pending. The [gateway wire baseline](../../clients/contracts/README.md)
 and [synthetic fixtures](../../clients/contracts/fixtures/index.json) describe
 server behavior at gateway revision `89fe1899b7f008cbd30cf073e0f748e1529d7519`;
@@ -23,9 +23,9 @@ This does not authorize gateway/plugin changes, enrollment exposure or release.
 
 One `ThinkPixelSRClient` per gateway/key, synchronous Python/PHP and asynchronous
 TypeScript. Construction performs no I/O. Origin is required with no default public origin. Applications inject secrets.
-For Python, the later operator decision permits `api_key=None` to read
-`THINKPIXEL_API_KEY`; an explicit key takes precedence. Other languages retain
-explicit-key configuration.
+The later operator decisions permit Python `api_key=None` and omitted TypeScript
+`apiKey` to read `THINKPIXEL_API_KEY`; an explicit key takes precedence. PHP
+retains explicit-key configuration.
 
 | Concept | Python | TypeScript | PHP |
 | --- | --- | --- | --- |
