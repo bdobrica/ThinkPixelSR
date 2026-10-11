@@ -124,6 +124,12 @@ ESM-first package with clear declared Node.js support; typed request/results, `f
 
 ### PHP
 
+**Operator sequencing decision (2026-10-11):** implement Phase 4C with the same
+existing-key scope as Python and TypeScript. Defer CL-040 registration; consistent
+exception mapping is part of CL-039/CL-041. Omitted `api_key` reads
+`THINKPIXEL_API_KEY`, explicit keys win. Use bump2version for independent versions.
+Gates 0–3 and live acceptance remain open; no server/plugin changes or publication.
+
 Composer-distributed library with namespaces and a documented supported PHP range; prefer PSR-18/PSR-17-compatible transport if practical without heavy dependencies. Use PHPUnit, PHPStan (or equivalent), short WordPress-compatible usage examples and a clear explanation that it does **not** replace ThinkPixelPlugin.
 
 Build the languages sequentially, stabilizing shared fixtures before each port. Avoid cross-language generated SDK code if it complicates the MVP more than hand-maintained thin clients.

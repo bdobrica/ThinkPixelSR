@@ -99,11 +99,19 @@ Independent version 0.1.0 was assigned using bump2version; nothing was published
 
 ## Phase 4C — PHP SDK
 
-- [ ] **CL-038** Create `php/` Composer package, namespaces, supported runtime declaration and HTTP transport strategy.
-- [ ] **CL-039** Implement key→JWT exchange/cache, `/store` and `/search` without changing the existing WordPress plugin.
-- [ ] **CL-040** Add approved registration workflow and consistent exception mapping.
-- [ ] **CL-041** Add PHPUnit/shared fixture tests, static analysis and Composer validity checks.
-- [ ] **CL-042** Document plain PHP and optional WordPress-adjacent examples, key storage precautions and installation.
+- [x] **CL-038** Create `php/` Composer package, namespaces, supported runtime declaration and HTTP transport strategy.
+- [x] **CL-039** Implement key→JWT exchange/cache, `/store` and `/search` without changing the existing WordPress plugin.
+- [ ] **CL-040** Add approved registration workflow and consistent exception mapping. Registration deferred by operator; exception mapping is covered by CL-039/CL-041.
+- [x] **CL-041** Add PHPUnit/shared fixture tests, static analysis and Composer validity checks.
+- [x] **CL-042** Document plain PHP and optional WordPress-adjacent examples, key storage precautions and installation.
+
+**Operator sequencing exception (2026-10-11):** implement PHP existing-key
+store/search; defer CL-040 registration. Omitted `api_key` reads
+`THINKPIXEL_API_KEY`; explicit keys take precedence. Gates 0–3 and live acceptance
+remain open. **CL-038–CL-039, CL-041–CL-042 evidence:** [package and commands](php/README.md),
+[tests, archive/consumer checks and runtime limits](../docs/evidence/clients-php/README.md).
+Independent 0.1.0 was assigned using bump2version; nothing was published.
+
 - [ ] **GATE 4** Confirm parity matrix and staging store→eventual-search test for each language, or record explicit environment limitations.
 
 ## Phase 5 — Docs, security, CI and release (Gate 5)

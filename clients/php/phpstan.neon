@@ -1,0 +1,8 @@
+parameters:
+    level: 8
+    paths:
+        - src
+        - examples
+    tmpDir: /tmp/thinkpixel-phpstan
+    treatPhpDocTypesAsCertain: false
+    phpVersion: 80300

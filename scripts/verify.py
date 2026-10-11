@@ -10,7 +10,14 @@ from config import ConfigError
 
 def documentation_links(repo):
     count = 0
-    for path in [*(repo.glob("*.md")), *(repo / "docs").rglob("*.md"), *(repo / "clients").rglob("*.md")]:
+    from audit import git
+    # Match the audit's candidate scope: dependency/generated trees stay ignored.
+    candidates = git(repo, "ls-files", "--cached", "--others", "--exclude-standard", "-z")
+    paths = sorted({repo / name.decode() for name in candidates.split(b"\0") if name})
+    for path in paths:
+        relative = path.relative_to(repo)
+        if path.suffix != ".md" or (len(relative.parts) > 1 and relative.parts[0] not in {"docs", "clients"}):
+            continue
         content = re.sub(r"```[\s\S]*?```", "", path.read_text())
         for target in re.findall(r"\[[^\]]*\]\(([^)]+)\)", content):
             target = target.strip("<>").split(" \"", 1)[0]

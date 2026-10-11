@@ -17,6 +17,9 @@ EDITABLE = {"README.md", "cluster/README.md", ".gitignore", "cluster/live/dev/te
 ADDITIONS = {".env.example", "Makefile", "AGENTS.md", "PLAN.md", "TODO.md",
              "clients/README.md", "clients/PLAN.md", "clients/TODO.md",
              "clients/contracts/README.md",
+             "clients/php/.gitignore", "clients/php/.bumpversion.cfg", "clients/php/composer.json",
+             "clients/php/composer.lock", "clients/php/phpunit.xml", "clients/php/phpstan.neon",
+             "clients/php/README.md", "clients/php/CHANGELOG.md", "clients/php/LICENSE",
              "clients/typescript/.gitignore", "clients/typescript/.bumpversion.cfg",
              "clients/typescript/package.json", "clients/typescript/package-lock.json",
              "clients/typescript/tsconfig.json", "clients/typescript/tsconfig.examples.json",
@@ -112,7 +115,9 @@ def audit(repo):
         typescript_sdk = (name.endswith(".ts") and name.startswith((
             "clients/typescript/src/", "clients/typescript/examples/"))) or (
             name.endswith(".test.mjs") and name.startswith("clients/typescript/tests/"))
-        if name not in baseline and name not in ADDITIONS and not contract_fixture and not python_sdk and not typescript_sdk and not name.startswith(("docs/", "scripts/", "tests/")):
+        php_sdk = name.endswith(".php") and name.startswith((
+            "clients/php/src/", "clients/php/tests/", "clients/php/examples/"))
+        if name not in baseline and name not in ADDITIONS and not contract_fixture and not python_sdk and not typescript_sdk and not php_sdk and not name.startswith(("docs/", "scripts/", "tests/")):
             raise ConfigError("audit: new candidate outside the reviewed makeover paths")
         path = repo / name
         if path.is_symlink() or not path.is_file():
