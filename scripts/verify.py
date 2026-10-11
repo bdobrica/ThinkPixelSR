@@ -10,7 +10,7 @@ from config import ConfigError
 
 def documentation_links(repo):
     count = 0
-    for path in [*(repo.glob("*.md")), *(repo / "docs").rglob("*.md")]:
+    for path in [*(repo.glob("*.md")), *(repo / "docs").rglob("*.md"), *(repo / "clients").rglob("*.md")]:
         content = re.sub(r"```[\s\S]*?```", "", path.read_text())
         for target in re.findall(r"\[[^\]]*\]\(([^)]+)\)", content):
             target = target.strip("<>").split(" \"", 1)[0]

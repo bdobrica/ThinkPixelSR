@@ -1,17 +1,21 @@
 # TODO — ThinkPixelSR language clients
 
-Chronological implementation checklist for [PLAN.md](PLAN.md). **All items begin unchecked.** Mark complete only with a reviewed change and test/documentation evidence. IDs are stable for issues and PRs. Do not begin client implementations until existing gateway and plugin wire behavior is captured. Public registration needs a security decision before server changes.
+Chronological implementation checklist for [PLAN.md](PLAN.md). Completed Phase 0 source/documentation tasks link to their evidence below. Mark complete only with a reviewed change and test/documentation evidence. IDs are stable for issues and PRs. Do not begin client implementations until existing gateway and plugin wire behavior is captured. Public registration needs a security decision before server changes.
 
 ## Phase 0 — Evidence and baseline (Gate 0)
 
-- [ ] **CL-001** Inspect ThinkPixelSR gateway code and ThinkPixelPlugin authentication, storage and search calls. Record source paths and commit SHAs.
-- [ ] **CL-002** Document actual API base URL, auth endpoint and header/body/response/expiry behavior. Do not assume route names from SDK sketches.
-- [ ] **CL-003** Document exact `/store` method, schema, metadata, accepted response, error codes and asynchronous indexing guarantees.
-- [ ] **CL-004** Document exact `/search` method, query/filter/scope schema, result fields, ranking metadata and errors.
-- [ ] **CL-005** Inspect existing key generation, ownership, MySQL persistence, hashing, revocation and registration/provisioning paths.
-- [ ] **CL-006** Add `contracts/README.md` and sanitized golden JSON fixtures; record uncertainties, versioning and source provenance.
-- [ ] **CL-007** Run or document a baseline ThinkPixelPlugin→gateway→index→search smoke test; note environment-dependent omissions.
+- [x] **CL-001** Inspect ThinkPixelSR gateway code and ThinkPixelPlugin authentication, storage and search calls. Record source paths and commit SHAs.
+- [x] **CL-002** Document actual API base URL, auth endpoint and header/body/response/expiry behavior. Do not assume route names from SDK sketches.
+- [x] **CL-003** Document exact `/store` method, schema, metadata, accepted response, error codes and asynchronous indexing guarantees.
+- [x] **CL-004** Document exact `/search` method, query/filter/scope schema, result fields, ranking metadata and errors.
+- [x] **CL-005** Inspect existing key generation, ownership, MySQL persistence, hashing, revocation and registration/provisioning paths.
+- [x] **CL-006** Add `contracts/README.md` and sanitized golden JSON fixtures; record uncertainties, versioning and source provenance.
+- [x] **CL-007** Run or document a baseline ThinkPixelPlugin→gateway→index→search smoke test; note environment-dependent omissions.
 - [ ] **GATE 0** Peer-review and freeze a *verified* initial wire-compatibility matrix.
+
+**CL-001–CL-007 evidence:** [wire baseline and fixtures](contracts/README.md),
+[source revisions, verification and documented smoke omissions](../docs/evidence/clients-phase-0/README.md).
+Gate 0 awaits independent review; live compatibility remains unverified.
 
 ## Phase 1 — SDK interface and engineering choices (Gate 1)
 

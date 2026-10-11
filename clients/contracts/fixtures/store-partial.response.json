@@ -1,0 +1,15 @@
+{
+  "received_texts": 2,
+  "pending_documents": 1,
+  "failed_documents": 1,
+  "pending_ids": [
+    900001
+  ],
+  "failed_items": [
+    {
+      "id": 900002,
+      "error": "sanitized queue publish failure"
+    }
+  ],
+  "timestamp": "2030-01-01T00:00:00Z"
+}

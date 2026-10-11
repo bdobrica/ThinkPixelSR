@@ -1,0 +1,7 @@
+{
+  "domain": "site.example",
+  "path": "/",
+  "estimated_pages": 2,
+  "average_page_size": 100,
+  "st_dev_page_size": 0
+}

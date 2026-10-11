@@ -2,7 +2,7 @@
 
 ## 1. Objective
 
-Add `clients/` to ThinkPixelSR to provide reliable, idiomatic **Python, TypeScript and PHP** libraries for the existing Search/RAG API. Match the behavior of the working [ThinkPixelPlugin](https://github.com/bdobrica/ThinkPixelPlugin): API-key authentication, key-to-JWT exchange, document submission and document search. Add a narrowly scoped, secure **public API-key registration flow** because obtaining a first key cannot be solved by client libraries alone.
+Add `clients/` to ThinkPixelSR to provide reliable, idiomatic **Python, TypeScript and PHP** libraries for the existing Search/RAG API. Match the behavior of the working [ThinkPixelPlugin](https://github.com/bdobrica/ThinkPixelPlugin): API-key authentication, key-to-JWT exchange, document submission and document search. Review the existing callback-based `POST /register` and define a narrowly scoped, secure **SDK API-key registration flow** because obtaining a first key cannot be solved by client libraries alone.
 
 This is a **client usability initiative with one explicit server-side dependency**. It is not permission to redesign the working gateway, database, ingestion, indexing, retrieval or infrastructure architecture. This plan is subordinate to the repository's [root architectural invariants](../PLAN.md) except where the public registration endpoint is deliberately approved as a scoped addition.
 
@@ -30,6 +30,10 @@ Inspect the **source** of `docker/api_gateway` and the ThinkPixelPlugin client i
 
 Write `clients/contracts/README.md` and sanitized JSON fixtures with a source location/commit reference. Resolve inconsistencies by preserving actual working plugin behavior and recording decisions, not by guessing a “cleaner” contract. Obtain an integration environment or record test gaps.
 
+The [Phase 0 baseline](contracts/README.md) records the existing `POST /register`
+callback flow and source revisions. A generic synchronous enrollment route is
+not implemented; do not add or replace a route before Gate 2 review.
+
 **Gate 0:** protocol and sample fixture evidence reviewed. Do not lock public SDK signatures or claim example payloads work before this gate.
 
 ## 4. Phase 1 — Define the SDK contract
@@ -53,7 +57,7 @@ Proposed logical interface: `authenticate`, `store`, `search`, `register_key`/`r
 
 “Public endpoint” means callable without an **existing** API key/JWT. It does **not** authorize anonymous users to mint unlimited, privileged keys. Before implementing, choose and document the business policy: invitation token, email/domain verification, existing account authentication via a distinct proof, human approval, or controlled self-service. For MVP, prefer an operator-issued **single-use, expiring invitation** if no identity/verification mechanism already exists; don't introduce a new full identity service merely to support the SDKs.
 
-### 5.2 Proposed contract (not yet an existing endpoint)
+### 5.2 Proposed generic SDK contract (existing callback enrollment is separate)
 
 - Candidate route: `POST /register` or a versioned equivalent **subject to the gateway's actual routing conventions**.
 - Input: registration proof and minimum necessary key-owner/site metadata. Field names and JSON are **TBD** pending Gate 0 and threat-model review.

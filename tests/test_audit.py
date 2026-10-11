@@ -78,14 +78,17 @@ class AuditTests(unittest.TestCase):
                 return real(path)
             with patch.object(audit, "git", selected), patch.object(Path, "read_bytes", read):
                 self.assertEqual(audit.audit(fixture)["scanned"], 1)
-        def extra(repo, *args):
-            data = original(repo, *args)
-            if args == ("ls-files", "--others", "--exclude-standard", "-z"):
-                data += b"k8s/unreviewed-workload.yaml\0"
-            return data
-        with patch.object(audit, "git", extra):
-            with self.assertRaisesRegex(audit.ConfigError, "outside"):
-                audit.audit(REPO)
+        for candidate in (b"k8s/unreviewed-workload.yaml\0",
+                          b"clients/python/client.py\0",
+                          b"clients/contracts/fixtures/client.py\0"):
+            def extra(repo, *args):
+                data = original(repo, *args)
+                if args == ("ls-files", "--others", "--exclude-standard", "-z"):
+                    data += candidate
+                return data
+            with patch.object(audit, "git", extra):
+                with self.assertRaisesRegex(audit.ConfigError, "outside"):
+                    audit.audit(REPO)
 
     def test_missing_baseline_fails_with_sanitized_diagnostics(self):
         with patch.object(audit.subprocess, "run", return_value=subprocess.CompletedProcess([], 1, b"private-canary", b"private-canary")):

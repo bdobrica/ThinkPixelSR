@@ -15,7 +15,8 @@ from config import ConfigError, FILES
 BASELINE = "9e5fc87495832d3a2554965341cbeb43911ff5f5"
 EDITABLE = {"README.md", "cluster/README.md", ".gitignore", "cluster/live/dev/terragrunt.hcl"}
 ADDITIONS = {".env.example", "Makefile", "AGENTS.md", "PLAN.md", "TODO.md",
-             "clients/README.md", "clients/PLAN.md", "clients/TODO.md"}
+             "clients/README.md", "clients/PLAN.md", "clients/TODO.md",
+             "clients/contracts/README.md"}
 PATTERNS = (
     rb"-----BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY-----",
     rb"\bgh[pousr]_[A-Za-z0-9]{36,}\b",
@@ -98,7 +99,8 @@ def audit(repo):
     candidates = set(index)
     candidates.update(p.decode() for p in git(repo, "ls-files", "--others", "--exclude-standard", "-z").split(b"\0") if p)
     for name in sorted(candidates):
-        if name not in baseline and name not in ADDITIONS and not name.startswith(("docs/", "scripts/", "tests/")):
+        contract_fixture = name.startswith("clients/contracts/fixtures/") and name.endswith(".json")
+        if name not in baseline and name not in ADDITIONS and not contract_fixture and not name.startswith(("docs/", "scripts/", "tests/")):
             raise ConfigError("audit: new candidate outside the reviewed makeover paths")
         path = repo / name
         if path.is_symlink() or not path.is_file():

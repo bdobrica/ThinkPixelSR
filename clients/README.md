@@ -2,7 +2,7 @@
 
 Official, small language clients for the existing [ThinkPixelSR](../README.md) Search/RAG gateway. The goal is to make the working integration demonstrated by [ThinkPixelPlugin](https://github.com/bdobrica/ThinkPixelPlugin) available to other applications without requiring developers to implement the HTTP authentication and ingestion/search flow themselves.
 
-> **Status: planned.** The Python, TypeScript and PHP packages, sample calls and public registration flow described here are target capabilities, **not** evidence that SDKs or new API endpoints exist. See [PLAN.md](PLAN.md) and [TODO.md](TODO.md). Actual endpoint details must be verified against the gateway and plugin source before coding.
+> **Status: Phase 0 source baseline documented; Gate 0 review pending.** The Python, TypeScript and PHP packages, sample calls and public registration flow described here are target capabilities, **not** evidence that SDKs or new API endpoints exist. See [PLAN.md](PLAN.md) and [TODO.md](TODO.md). See the [source-audited wire baseline](contracts/README.md) and its explicit live-test gaps before coding.
 
 ## Scope
 
@@ -22,7 +22,7 @@ clients/
 ├── README.md
 ├── PLAN.md
 ├── TODO.md
-├── contracts/             # Verified API contract and shared fixtures (planned)
+├── contracts/             # Source-audited API baseline and synthetic fixtures
 ├── python/                # Python package and examples (planned)
 ├── typescript/            # Node.js/browser-compatible TS package (planned)
 └── php/                   # Composer package and examples (planned)
@@ -57,7 +57,7 @@ sequenceDiagram
     participant App as Application / SDK
     participant Gateway as ThinkPixelSR gateway
     participant Queue as NATS + indexer
-    App->>Gateway: Existing API key → JWT exchange (verified route TBD)
+    App->>Gateway: Existing API key → JWT exchange (POST /auth/token)
     Gateway-->>App: Short-lived JWT
     App->>Gateway: Store request + Bearer JWT (/store)
     Gateway->>Queue: Enqueue document
@@ -71,7 +71,7 @@ The model/embedding and vector search path remains entirely server-side; clients
 
 ## Public key registration (planned server dependency)
 
-A new **unauthenticated-to-start** registration endpoint is needed to obtain an initial API key. *Publicly reachable must not mean unrestricted self-issuance of credentials.* The design and acceptance gate are in [PLAN.md](PLAN.md).
+The existing `POST /register` initiates WordPress site validation and delivers a key through callbacks; it does not return an API key directly. A generic SDK enrollment contract remains planned. *Publicly reachable must not mean unrestricted self-issuance of credentials.* The design and acceptance gate are in [PLAN.md](PLAN.md).
 
 Proposed lifecycle:
 
@@ -80,7 +80,7 @@ Proposed lifecycle:
 3. The application stores the key securely and invokes normal key-to-JWT authentication.
 4. Operators can disable open enrollment, revoke keys, and audit registrations.
 
-Until the server contract is approved and implemented, SDK `register*` methods must be marked unavailable or clearly gated; **never** simulate registration by directly writing to MySQL or invent a client-side key.
+Until the generic SDK enrollment contract is approved and implemented, SDK `register*` methods must be marked unavailable or clearly gated; **never** simulate registration by directly writing to MySQL or invent a client-side key.
 
 ## Compatibility and quality
 

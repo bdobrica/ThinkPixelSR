@@ -1,0 +1,307 @@
+{
+  "baseline_version": "v0",
+  "gateway_commit": "89fe1899b7f008cbd30cf073e0f748e1529d7519",
+  "plugin_commit": "b8f64d05cbe11a58dbf7f7dcee0f5dce271d7d63",
+  "credential_markers_are_nonfunctional": true,
+  "cases": [
+    {
+      "id": "auth-success",
+      "method": "POST",
+      "path": "/auth/token",
+      "request_headers": {
+        "X-API-Key": "SYNTHETIC_NOT_AN_API_KEY"
+      },
+      "request_body": null,
+      "status": 200,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "auth-success.response.json",
+      "source": "docker/api_gateway/api_gateway/auth/auth.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "auth-missing-key",
+      "method": "POST",
+      "path": "/auth/token",
+      "request_headers": {},
+      "request_body": null,
+      "status": 400,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "auth-missing-key.response.json",
+      "source": "docker/api_gateway/api_gateway/auth/auth.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "auth-invalid-key",
+      "method": "POST",
+      "path": "/auth/token",
+      "request_headers": {
+        "X-API-Key": "SYNTHETIC_INVALID_KEY"
+      },
+      "request_body": null,
+      "status": 500,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "auth-invalid-key.response.json",
+      "source": "docker/api_gateway/api_gateway/auth/auth.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "store-missing-token",
+      "method": "POST",
+      "path": "/store",
+      "request_headers": {
+        "Content-Type": "application/json"
+      },
+      "request_body": "store-missing-token.request.json",
+      "status": 401,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "store-missing-token.response.json",
+      "source": "docker/api_gateway/api_gateway/middleware/auth_middleware.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "search-invalid-token",
+      "method": "POST",
+      "path": "/search",
+      "request_headers": {
+        "Authorization": "Bearer SYNTHETIC_NOT_A_JWT",
+        "Content-Type": "application/json"
+      },
+      "request_body": "search-invalid-token.request.json",
+      "status": 401,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "search-invalid-token.response.json",
+      "source": "docker/api_gateway/api_gateway/middleware/auth_middleware.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "store-accepted",
+      "method": "POST",
+      "path": "/store",
+      "request_headers": {
+        "Authorization": "Bearer SYNTHETIC_NOT_A_JWT",
+        "Content-Type": "application/json"
+      },
+      "request_body": "store-accepted.request.json",
+      "status": 202,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "store-accepted.response.json",
+      "source": "docker/api_gateway/api_gateway/handlers/store_handler.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "store-partial",
+      "method": "POST",
+      "path": "/store",
+      "request_headers": {
+        "Authorization": "Bearer SYNTHETIC_NOT_A_JWT",
+        "Content-Type": "application/json"
+      },
+      "request_body": "store-partial.request.json",
+      "status": 202,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "store-partial.response.json",
+      "source": "docker/api_gateway/api_gateway/handlers/store_handler.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "store-all-failed",
+      "method": "POST",
+      "path": "/store",
+      "request_headers": {
+        "Authorization": "Bearer SYNTHETIC_NOT_A_JWT",
+        "Content-Type": "application/json"
+      },
+      "request_body": "store-all-failed.request.json",
+      "status": 500,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "store-all-failed.response.json",
+      "source": "docker/api_gateway/api_gateway/handlers/store_handler.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "store-empty",
+      "method": "POST",
+      "path": "/store",
+      "request_headers": {
+        "Authorization": "Bearer SYNTHETIC_NOT_A_JWT",
+        "Content-Type": "application/json"
+      },
+      "request_body": "store-empty.request.json",
+      "status": 400,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "store-empty.response.json",
+      "source": "docker/api_gateway/api_gateway/handlers/store_handler.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "store-wrong-shape",
+      "method": "POST",
+      "path": "/store",
+      "request_headers": {
+        "Authorization": "Bearer SYNTHETIC_NOT_A_JWT",
+        "Content-Type": "application/json"
+      },
+      "request_body": "store-wrong-shape.request.json",
+      "status": 400,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "store-wrong-shape.response.json",
+      "source": "docker/api_gateway/api_gateway/handlers/store_handler.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "search-success",
+      "method": "POST",
+      "path": "/search",
+      "request_headers": {
+        "Authorization": "Bearer SYNTHETIC_NOT_A_JWT",
+        "Content-Type": "application/json"
+      },
+      "request_body": "search-success.request.json",
+      "status": 200,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "search-success.response.json",
+      "source": "docker/api_gateway/api_gateway/qdrantconn/qdrantconn.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "search-empty-qdrant",
+      "method": "POST",
+      "path": "/search",
+      "request_headers": {
+        "Authorization": "Bearer SYNTHETIC_NOT_A_JWT",
+        "Content-Type": "application/json"
+      },
+      "request_body": "search-empty-qdrant.request.json",
+      "status": 200,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "search-empty-qdrant.response.json",
+      "source": "docker/api_gateway/api_gateway/qdrantconn/qdrantconn.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "search-empty-redis",
+      "method": "POST",
+      "path": "/search",
+      "request_headers": {
+        "Authorization": "Bearer SYNTHETIC_NOT_A_JWT",
+        "Content-Type": "application/json"
+      },
+      "request_body": "search-empty-redis.request.json",
+      "status": 200,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "search-empty-redis.response.json",
+      "source": "docker/api_gateway/api_gateway/redisconn/redisconn.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "search-missing-text",
+      "method": "POST",
+      "path": "/search",
+      "request_headers": {
+        "Authorization": "Bearer SYNTHETIC_NOT_A_JWT",
+        "Content-Type": "application/json"
+      },
+      "request_body": "search-missing-text.request.json",
+      "status": 400,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "search-missing-text.response.json",
+      "source": "docker/api_gateway/api_gateway/handlers/search_handler.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "search-wrong-type",
+      "method": "POST",
+      "path": "/search",
+      "request_headers": {
+        "Authorization": "Bearer SYNTHETIC_NOT_A_JWT",
+        "Content-Type": "application/json"
+      },
+      "request_body": "search-wrong-type.request.json",
+      "status": 400,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "search-wrong-type.response.json",
+      "source": "docker/api_gateway/api_gateway/handlers/search_handler.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "search-timeout",
+      "method": "POST",
+      "path": "/search",
+      "request_headers": {
+        "Authorization": "Bearer SYNTHETIC_NOT_A_JWT",
+        "Content-Type": "application/json"
+      },
+      "request_body": "search-timeout.request.json",
+      "status": 408,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "search-timeout.response.json",
+      "source": "docker/api_gateway/api_gateway/handlers/search_handler.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "search-retrieval-failure",
+      "method": "POST",
+      "path": "/search",
+      "request_headers": {
+        "Authorization": "Bearer SYNTHETIC_NOT_A_JWT",
+        "Content-Type": "application/json"
+      },
+      "request_body": "search-retrieval-failure.request.json",
+      "status": 500,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "search-retrieval-failure.response.json",
+      "source": "docker/api_gateway/api_gateway/handlers/search_handler.go",
+      "evidence": "synthetic-source-derived"
+    },
+    {
+      "id": "registration-pending",
+      "method": "POST",
+      "path": "/register",
+      "request_headers": {
+        "Content-Type": "application/json"
+      },
+      "request_body": "registration-pending.request.json",
+      "status": 200,
+      "response_headers": {
+        "Content-Type": "application/json"
+      },
+      "response_body": "registration-pending.response.json",
+      "source": "docker/api_gateway/api_gateway/register/register.go",
+      "evidence": "synthetic-source-derived"
+    }
+  ]
+}

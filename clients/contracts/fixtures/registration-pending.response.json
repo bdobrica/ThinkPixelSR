@@ -1,0 +1,5 @@
+{
+  "validation_token": "SYNTHETIC_NOT_A_VALIDATION_TOKEN",
+  "validation_token_expires_at": "2030-01-01T00:05:00Z",
+  "message": "Validation initiated. Please respond to the challenge."
+}

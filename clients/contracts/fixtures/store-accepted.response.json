@@ -1,0 +1,10 @@
+{
+  "received_texts": 2,
+  "pending_documents": 2,
+  "failed_documents": 0,
+  "pending_ids": [
+    900001,
+    900002
+  ],
+  "timestamp": "2030-01-01T00:00:00Z"
+}
