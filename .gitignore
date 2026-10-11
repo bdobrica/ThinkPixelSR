@@ -37,6 +37,47 @@ secret.yaml
 *-secrets.yaml
 !*-sealed-secrets.yaml
 
+# Local operator configuration (examples remain trackable at any depth).
+.env
+.env.*
+!.env.example
+*.secrets.hcl
+*.secrets.hcl.json
+!.secrets.hcl.example
+!*.secrets.hcl.example
+secrets.local/
+
+# Private SSH/TLS material; retain the inherited public *.key.pub files.
+.ssh/
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.pem
+*.p12
+*.pfx
+*.key.*
+!*.key.pub
+
+# Cluster credentials and sensitive Terraform outputs, including nested paths.
+kubeconfig
+kubeconfig.*
+*.kubeconfig
+.kube/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+tfplan.*
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+!*.tfvars.json.example
+terragrunt-debug.tfvars.json
+debug.tfvars
+crash.log
+crash.*.log
+
 # Ignore Python specific files
 __pycache__/
 *.py[cod]

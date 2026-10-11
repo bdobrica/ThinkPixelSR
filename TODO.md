@@ -20,11 +20,11 @@ Follow [PLAN.md](PLAN.md). Check a box only after its acceptance evidence exists
 
 ## Phase 2 — Introduce safe configuration
 
-- [ ] **P2-01** Define `.env` schema and precedence, backed by a table mapping keys to existing Terragrunt/Flux/Docker consumers. **Done:** no new competing source of truth.
-- [ ] **P2-02** Add sanitized `.env.example` (`ENV`, Hetzner/DNS secret locations, SSH key locations, cluster parameters, registry/image inputs **only as actually needed**). **Done:** no real credentials or private paths exposed.
-- [ ] **P2-03** Update `.gitignore` to cover `.env`, local secret files, private SSH keys, kubeconfigs and nested Terraform state, without accidentally ignoring intended checked-in examples. **Done:** `git status`/ignore checks and secret scan pass.
-- [ ] **P2-04** Implement safe configuration validation and translation that feeds existing `.secrets.hcl`/Terragrunt behavior or documented environment overrides; avoid shell-evaluating untrusted `.env`. **Done:** previous direct Terragrunt path still works.
-- [ ] **P2-05** Test dev/prod and negative cases: missing token, missing key, invalid ENV, malformed numbers, unsupported pool, quoted values, unexpected whitespace, sensitive logging. **Done:** clear errors and no leaked secrets.
+- [x] **P2-01** Define `.env` schema and precedence, backed by a table mapping keys to existing Terragrunt/Flux/Docker consumers. **Done:** selector/path mapping and unchanged authorities documented; no duplicate cluster/image settings. [Contract](docs/configuration.md).
+- [x] **P2-02** Add sanitized `.env.example` (`ENV`, Hetzner/DNS secret locations, SSH key locations, cluster parameters, registry/image inputs **only as actually needed**). **Done:** seven selector/path keys, no credentials or private operator paths. [Template](.env.example).
+- [x] **P2-03** Update `.gitignore` to cover `.env`, local secret files, private SSH keys, kubeconfigs and nested Terraform state, without accidentally ignoring intended checked-in examples. **Done:** synthetic nested ignore checks, tracked-file review and limited secret-pattern scan pass. [Evidence](docs/evidence/phase-2/README.md).
+- [x] **P2-04** Implement safe configuration validation and translation that feeds existing `.secrets.hcl`/Terragrunt behavior or documented environment overrides; avoid shell-evaluating untrusted `.env`. **Done:** read-only Python loader and optional dev path hooks; complete inputs equal the frozen direct baseline in offline Terragrunt tests. [Contract and limits](docs/configuration.md).
+- [x] **P2-05** Test dev/prod and negative cases: missing token, missing key, invalid ENV, malformed numbers, unsupported pool, quoted values, unexpected whitespace, sensitive logging. **Done:** 16 synthetic tests pass; empty prod explicitly blocked, diagnostics redacted, no live checks. [Evidence](docs/evidence/phase-2/README.md).
 
 ## Phase 3 — Implement Makefile in risk order
 
