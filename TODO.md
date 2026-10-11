@@ -54,13 +54,17 @@ external bootstrap/schema prerequisites and authorized live dev/plugin validatio
 
 ## Phase 5 — Validate, migrate, close
 
-- [ ] **P5-01** Run static validation/secret scanning and confirm no unintended changes to code, API contracts, database schema, runtime manifests or resource identities. **Done:** reviewed baseline diff.
-- [ ] **P5-02** Walk the documented dev lifecycle: config-check -> cluster-plan -> authorized cluster-up -> Flux bootstrap/reconcile -> image pull -> status. **Done:** record observed results or precise blockers.
-- [ ] **P5-03** Exercise the actual ThinkPixelPlugin document-ingest-to-search golden path and compare to baseline. **Done:** expected results and limitations captured with sanitized logs.
-- [ ] **P5-04** Verify scaling (at minimum safe plan/review; live scale tests if authorized) and document rollback with actual worker pools and workload constraints.
-- [ ] **P5-05** Schedule and perform explicit GitOps remote switch only after verifying access, rollback and old source retention. **Done:** new source reconciles as intended; old source can be restored.
-- [ ] **P5-06** Update parent ThinkPixel catalog/docs for actual `ThinkPixelSR` repository and retain lineage link to ThinkPixelInfra; do not elevate maturity automatically.
-- [ ] **P5-07** Review release notes, broken links, scripts and cross-file consistency; mark verified commands stable and document open limitations. **Done:** acceptance criteria in PLAN met, with evidence.
+Offline validation and the dev blocker-record alternative are complete. Live
+acceptance, source switch/recovery, parent publication and final closure remain
+pending; the overall PLAN gate is open. [Evidence and prepared review patches](docs/evidence/phase-5/README.md).
+
+- [x] **P5-01** Run static validation/secret scanning and confirm no unintended changes to code, API contracts, database schema, runtime manifests or resource identities. **Done:** repeatable baseline gate, limited candidate secret-pattern/path scan, 401/405 inherited files byte-identical with four reviewed docs/ignore/path-hook exceptions; six current renders match frozen renders. [Comparison and scope](docs/evidence/phase-5/README.md#p5-01-baseline-and-publication-candidates).
+- [x] **P5-02** Walk the documented dev lifecycle: config-check -> cluster-plan -> authorized cluster-up -> Flux bootstrap/reconcile -> image pull -> status. **Done:** actual local check failures plus ordered, precise state/credentials/bootstrap/schema/live authorization blockers recorded; no live lifecycle success implied. [Walkthrough](docs/evidence/phase-5/README.md#p5-02-documented-dev-lifecycle-walkthrough).
+- [ ] **P5-03** Exercise the actual ThinkPixelPlugin document-ingest-to-search golden path and compare to baseline. **Done:** expected results and limitations captured with sanitized logs. **Pending:** authorized real WordPress/dev installation, fixtures and observed baseline comparison; source-derived procedure alone does not meet acceptance. [Gaps](docs/evidence/phase-5/README.md#p5-03-and-p5-04-plugin-and-scaling-acceptance-still-open).
+- [ ] **P5-04** Verify scaling (at minimum safe plan/review; live scale tests if authorized) and document rollback with actual worker pools and workload constraints. **Prepared:** synthetic guards and api/monitor recovery/storage review; actual current-state/worker plan and placement/PDB/PV review pending. [Guide](docs/operations/scaling.md).
+- [ ] **P5-05** Schedule and perform explicit GitOps remote switch only after verifying access, rollback and old source retention. **Done:** new source reconciles as intended; old source can be restored. **Prepared:** unapplied two-owner URL patch, zero tenant-render drift and synthetic rollback; scheduling/access/live reconciliation and switch-back pending. [Cutover decision](docs/migration.md#phase-5-review-patches-and-cutover-decision).
+- [ ] **P5-06** Update parent ThinkPixel catalog/docs for actual `ThinkPixelSR` repository and retain lineage link to ThinkPixelInfra; do not elevate maturity automatically. **Prepared:** applicability-checked patch at verified parent revision, stable `infra` ID and adjacent/standalone/lineage retained; publication waits for verification. [Patch](docs/evidence/phase-5/parent-catalog.patch).
+- [ ] **P5-07** Review release notes, broken links, scripts and cross-file consistency; mark verified commands stable and document open limitations. **Done:** acceptance criteria in PLAN met, with evidence. **Prepared:** reviewed unreleased notes and offline checks; final PLAN live acceptance remains pending. [Notes](docs/releases/operator-makeover.md).
 
 ## Deferred / separate proposals
 

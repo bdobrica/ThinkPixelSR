@@ -233,6 +233,16 @@ build/push errors are retained in private logs. Fresh artifact directories avoid
 overwriting local archives/logs. Actual multi-architecture builds, pushes and
 cluster pulls remain live acceptance gaps.
 
+## Offline baseline and candidate scan
+
+`make verify` also compares inherited files to the frozen Infra Git revision
+and scans tracked/nonignored publication candidates with limited secret patterns
+and sensitive-path rules. It requires full history, reads no ignored operator
+credentials and creates no report or staging changes. A passing scan does not
+constitute a comprehensive history/entropy audit. See
+[Phase 5 evidence](../evidence/phase-5/README.md) and
+[unreleased notes](../releases/operator-makeover.md) for the acceptance scope.
+
 ## Explicit live health and full smoke
 
 ```bash

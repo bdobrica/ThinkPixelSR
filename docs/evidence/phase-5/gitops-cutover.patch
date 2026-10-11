@@ -1,0 +1,22 @@
+--- a/k8s/flux-system/base/flux-instance.yaml
++++ b/k8s/flux-system/base/flux-instance.yaml
+@@ -22,7 +22,7 @@
+     domain: <cluster_domain>
+   sync:
+     kind: GitRepository
+-    url: https://github.com/bdobrica/ThinkPixelInfra
++    url: https://github.com/bdobrica/ThinkPixelSR
+     ref: refs/heads/main
+     path: k8s/flux-system/<environment>
+     pullSecret: github-token
+--- a/k8s/flux-system/base/flux-notification.yaml
++++ b/k8s/flux-system/base/flux-notification.yaml
+@@ -16,7 +16,7 @@
+         namespace: flux-system
+       spec:
+         type: github
+-        address: https://github.com/bdobrica/ThinkPixelInfra
++        address: https://github.com/bdobrica/ThinkPixelSR
+         secretRef:
+           name: github-token
+     - apiVersion: notification.toolkit.fluxcd.io/v1beta3

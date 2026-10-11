@@ -1,4 +1,4 @@
-# Repository migration — P1-01 through P1-04
+# Repository migration and controlled cutover
 
 ThinkPixelSR continues ThinkPixelInfra without changing the search MVP. This
 phase imports source and history and changes documentation-facing names only.
@@ -74,10 +74,13 @@ unverified.
    git tag --list
    ```
 
-   Expected: the runtime comparison exits 0. Of inherited files, only the two
+   Expected **at the Phase 1 import**: the runtime comparison exits 0. Of inherited files, only the two
    READMEs differ; additional files are governance documents and `docs/`.
    Before staging, additions are visible with `git status --short`. Do not use `git add .`
    before Phase 2 ignore protections and a complete sensitive-file review.
+   Subsequent configuration/ignore changes are intentional. Use `make verify`
+   and the [Phase 5 comparison](evidence/phase-5/README.md) for the current tree;
+   the historical import command above now reports those reviewed differences.
 3. Locate the authoritative state/backend/workspace outside this procedure.
    Do not run `terragrunt init/plan/apply` in the new checkout merely to verify
    an import: an unlocated local backend may appear to need a new cluster.
@@ -146,7 +149,69 @@ disabled until permissions, registry settings, and initial-push behavior have
 been reviewed. Do not use
 `--mirror`, `--force`, or point Flux at an unpublished/unvalidated new remote.
 
-## GitOps cutover gate — deferred to Phase 5
+## Phase 5 review patches and cutover decision
+
+The [Phase 5 evidence](evidence/phase-5/README.md) contains concrete, unapplied
+patches for the two GitOps owner URLs and the parent catalog/WordPress links.
+Frozen/working/proposed renders were compared offline; no source switch was
+performed. Release/deployment acceptance remains pending. Applying the patch
+locally does not switch a live cluster or publish a repository.
+
+From this checkout, applicability can be reviewed without changing files:
+
+```bash
+git apply --check docs/evidence/phase-5/gitops-cutover.patch
+git diff --check
+make verify
+```
+
+The parent patch targets ThinkPixel revision
+`129f113a54355cd4d6bd2c503dececcc2c763db2`. In a separate reviewed parent
+checkout, use the absolute path to this prepared patch:
+
+```bash
+: "${SR_PARENT_PATCH:?Set the path to ThinkPixelSR/docs/evidence/phase-5/parent-catalog.patch}"
+git apply --check "$SR_PARENT_PATCH"
+```
+
+Stop if either applicability check fails; refresh against reviewed source rather
+than force a patch. Keep parent `id: infra` and adjacent/standalone status.
+Publish the catalog correction after verification, as required by PLAN; no
+platform release manifest or maturity promotion follows from a repository rename.
+
+Before choosing a cutover window, the operator must supply the dev context,
+authoritative state/workspace/recovery custody, active compatible installation,
+disposable WordPress site and explicit authorization. Complete real dev/plugin
+acceptance and a real worker-plan review first. Publish the reviewed Phase 2–5
+continuation before asking source-controller to consume it; public GitHub reads
+do not test the cluster's Git credential. Verify old-source access, exact current
+and candidate revisions, CRD/controller ownership, PV/image identities and the
+snapshot-based rollback below. Record a window, owner and stop criteria only
+when these gates pass; no schedule has been invented.
+
+Prepare the two-URL change as its own reviewed continuation. The frozen audit
+currently rejects all runtime manifest changes; an approved cutover must update
+that gate in the same focused review to permit exactly these two owner URL
+changes and recheck normalized renders. Do not disable it or broadly allow
+runtime drift. Keep the old repository on the known-good old-source config.
+
+The live operation must update FluxInstance `flux` and ResourceSet
+`flux-notifications` owners in the observed dev cluster, never just the generated
+GitRepository/Provider. Build narrowly scoped patch files from the captured
+owner snapshots, with tests for old URL/ref/path/secret and Provider identity;
+review/server-dry-run them before separately authorized application. Preserve
+every unrelated field. If observed owners differ, stop for that installation's
+procedure rather than guessing new names or a second bootstrap.
+
+Success requires source artifact and root/tenant applied revisions from the
+approved new main, Ready conditions for current generations, expected images
+and PVCs and another actual plugin comparison. Exercise the reviewed switch-back
+and verify the old artifact/workloads/plugin before declaring recovery tested.
+An API GET or stale Ready condition is insufficient. Retain private snapshots,
+old source and credentials throughout; failed fetching/reconciliation triggers
+the switch-back below, not resource deletion or state relocation.
+
+## GitOps cutover gate — operator acceptance pending
 
 The initial import retains both old runtime URLs. A future cutover requires:
 

@@ -1,0 +1,38 @@
+--- a/catalog/components.yaml
++++ b/catalog/components.yaml
+@@ -193,9 +193,10 @@
+
+ adjacent_repositories:
+   - id: infra
+-    name: ThinkPixelInfra
+-    repository: bdobrica/ThinkPixelInfra
++    name: ThinkPixelSR
++    repository: bdobrica/ThinkPixelSR
+
+     relationship: >-
+-      Existing search, retrieval, and RAG implementation. Its future boundary
+-      with the ThinkPixel agent platform remains intentionally undefined.
++      Existing standalone search, retrieval, and RAG implementation, continued
++      from bdobrica/ThinkPixelInfra with history and lineage retained. Its future
++      boundary with the ThinkPixel agent platform remains intentionally undefined.
+--- a/README.md
++++ b/README.md
+@@ -120,7 +120,7 @@
+
+ | Component | Role | Status |
+ |---|---|---|
+-| [ThinkPixelSR / ThinkPixelInfra](https://github.com/bdobrica/ThinkPixelInfra) | Search and retrieval/RAG infrastructure. | Existing standalone implementation. Its eventual integration boundary with the agent platform remains intentionally undefined. |
++| [ThinkPixelSR](https://github.com/bdobrica/ThinkPixelSR) (continued from [ThinkPixelInfra](https://github.com/bdobrica/ThinkPixelInfra)) | Search and retrieval/RAG infrastructure. | Existing standalone implementation. Its eventual integration boundary with the agent platform remains intentionally undefined. |
+
+ The canonical machine-readable component catalog is [`catalog/components.yaml`](catalog/components.yaml).
+
+--- a/docs/use-cases/wordpress-hybrid-search.md
++++ b/docs/use-cases/wordpress-hybrid-search.md
+@@ -1,6 +1,6 @@
+ # Hybrid search for WordPress
+
+-**Component:** [ThinkPixelSR / ThinkPixelInfra](https://github.com/bdobrica/ThinkPixelInfra)
++**Component:** [ThinkPixelSR](https://github.com/bdobrica/ThinkPixelSR) (continued from [ThinkPixelInfra](https://github.com/bdobrica/ThinkPixelInfra))
+ **Status:** standalone / existing
+
+ The first practical ThinkPixel lineage is a search and retrieval system intended to move WordPress search beyond lexical coincidence.

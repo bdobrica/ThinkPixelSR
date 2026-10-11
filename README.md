@@ -156,6 +156,7 @@ image push/pull and scaling acceptance remain pending; prod is blocked.
 | Run offline checks, health and actual WordPress acceptance | [Verification](docs/operations/verification.md) |
 | Diagnose infrastructure, GitOps, queue, models and retrieval | [Troubleshooting](docs/operations/troubleshooting.md) |
 | Preserve lineage, stage source cutover and switch back | [Migration](docs/migration.md) |
+| Review candidate changes and remaining acceptance gates | [Unreleased operator notes](docs/releases/operator-makeover.md) |
 
 The guides reflect implemented commands and source behavior; they do not claim
 a completed live deployment/plugin run. Fresh bootstrap/schema prerequisites
@@ -170,6 +171,11 @@ Frozen inventories remain available for
 [retained history/import](docs/evidence/phase-1/README.md),
 [configuration](docs/evidence/phase-2/README.md) and
 [Make wrappers](docs/evidence/phase-3/README.md).
+
+[Phase 5 validation](docs/evidence/phase-5/README.md) adds a repeatable frozen
+source/limited secret audit and unapplied cutover/catalog review patches. Live
+deployment/plugin/scaling and source recovery remain pending; no cutover or
+release is claimed. The audit requires a full history checkout.
 
 ## Relationship to ThinkPixel
 

@@ -43,6 +43,10 @@ def verify(repo, env):
     summary = re.search(rb"Ran (\d+) tests", result.stderr)
     skipped = re.search(rb"skipped=(\d+)", result.stderr)
     print("Offline tests: " + (summary[1].decode() if summary else "suite") + " run, passed" + ("; " + skipped[1].decode() + " skipped" if skipped else ""))
+    from audit import audit
+    baseline = audit(repo)
+    print(f"Frozen baseline: {baseline['unchanged']}/{baseline['inherited']} inherited files byte-identical; reviewed docs/ignore/dev-path exceptions only")
+    print(f"Limited secret-pattern/path scan: {baseline['scanned']} tracked/nonignored candidate files passed (no history/ignored credentials scanned)")
     print("Documentation links: " + str(documentation_links(repo)) + " passed")
     capture(["make", "--no-print-directory", "-n", *TARGETS], repo, env)
     print("Make recipe parsing: passed")
