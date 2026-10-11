@@ -2,7 +2,8 @@
 
 The implementation is `scripts/config.py`, `.env.example` and optional path
 hooks in `cluster/live/dev/terragrunt.hcl`. This is a local, read-only validation
-interface. Root Make wrappers are scheduled for Phase 3.
+interface. The root Make targets reuse it; see the
+[command guide](operations/commands.md) for guarded operations.
 Python 3.9 or newer is required; the loader uses only the standard library.
 
 ## Start with local validation
@@ -78,6 +79,13 @@ seven names as the table. Unrelated process variables are ignored. Ambient
 `TF_VAR_*` and `TPSR_*` are rejected by validation/translation, because they
 could bypass or disagree with validated inputs. Unset them for this interface;
 the inherited direct Terragrunt workflow remains available separately.
+
+Root `make config-check ENV=dev` uses this loader. The Makefile exports defined
+arguments without shell interpolation and never includes `.env`. Command-specific
+state/approval, context, image and live-health arguments are passed separately;
+see the [Phase 3 command guide](operations/commands.md). They are not accepted
+as `.env` keys. Infrastructure wrappers also reject ambient Terraform/Terragrunt
+argument/config/logging overrides and unvalidated tfvars files.
 
 Examples of explicit local overrides (paths are illustrative):
 
